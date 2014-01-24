@@ -1,10 +1,10 @@
-Bonjour
+#Bonjour
 ==========
 
 Bonjour is an app for Purdue CS408 project.
 
 
-Links:
+##Links##
 
 1. Document drafts are on Google Drive:
    https://drive.google.com/folderview?id=0B3lBgLTAWAsuV2FmMjktSGw3VFE&usp=sharing
