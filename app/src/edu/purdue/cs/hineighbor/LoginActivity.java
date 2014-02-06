@@ -201,6 +201,7 @@ public class LoginActivity extends Activity {
 			// TODO: attempt authentication against a network service.
 
 			try {
+				APIHandler.login("aoisky", "123456");
 				// Simulate network access.
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {

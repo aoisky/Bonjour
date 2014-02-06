@@ -22,6 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.SignupActivity"
+            android:label="@string/title_activity_signup"
+            android:parentActivityName="me.imvoice.app.LoginActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.imvoice.app.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>
