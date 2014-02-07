@@ -7,11 +7,8 @@
  */
 
 class Database {
-	private $DEBUG_MODE = false;
-	
 	private $db = null;
 	private $dbParams;
-	private $num_of_rows = -1;
 	
 	public function __construct($p){
 		$this->dbParams = $p;
@@ -33,33 +30,21 @@ class Database {
 	}
 	
 	function selectQuery($sql){
-		//echo $sql;
 		$q = $this->db->query($sql);
 		$a = null;
 		if ($q){
-			$this->num_of_rows = $q->num_rows;
 			while ($row = $q->fetch_array(MYSQLI_BOTH)){
 				$a[] = $row;
 			}
 			$q->free();
-		} else if ($DEBUG_MODE) {
-			die("Error message from Db: %s\n" . $this->db->error);
-		} else {
-			$this->core->dieDbError();
-		}
+		}	
 		return $a;
-	}
-	
-	function getNumOfRecords(){
-		$t = $this->num_of_rows;
-		$this->num_of_rows = -1;
-		return $t;
 	}
 	
 	function insertQuery($sql){
 		$q = $this->db->query($sql);
 		if ($q){
-			//$q->free();
+			$q->free();
 			return true;
 		}
 		return false;

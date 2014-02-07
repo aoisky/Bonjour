@@ -7,16 +7,12 @@
  */
 
 class Login{
-	
-	private $DEBUG_MODE = false;
-	
+
 	private $core = null;
 	private $db = null;
 	
 	public $error = "";
 	public $ret = "";
-	
-	public $user_profile = array();
 
 	public function __construct(Core $c, Database $d) {
 		// create/read session, absolutely necessary
@@ -36,23 +32,22 @@ class Login{
 			$this->db->connect();
 			
 			$username = $this->db->escapeStr($username);
-			
-			$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users ". 
-					"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
-			
+
+			$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users
+					WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
+
 			$query = $this->db->selectQuery($sql);
-			$rows = $this->db->getNumOfRecords();
-			if ($rows == 1) {
+
+			if (sizeof($query) == 1) {
 
 				if (password_verify($password, $query[0]["user_password"])) {
 					
 					$this->ret = $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
-					if ($this->DEBUG_MODE) echo $this->ret;
-					// write user data into PHP SESSION (a file on your server)
-					//$_SESSION['user_name'] = $query[0]["user_name"];
-					//$_SESSION['user_email'] = $query[0]["user_email"];
-					//$_SESSION['user_login_status'] = 1;
 					
+					// write user data into PHP SESSION (a file on your server)
+					$_SESSION['user_name'] = $query[0]["user_name"];
+					$_SESSION['user_email'] = $query[0]["user_email"];
+					$_SESSION['user_login_status'] = 1;
 					return true;
 					
 				} else {
@@ -61,28 +56,6 @@ class Login{
 				}
 			} else {
 				$this->error = "This user does not exist.";
-			}
-		}
-		
-		return false;
-	}
-	
-	public function verifyToken($username = "", $token = "") {
-		if ($username == "" or $token == "") return false;
-		if (!preg_match($this->core->username_pattern, $username)) return false;
-		
-		$this->db->connect();
-		$username = $this->db->escapeStr($username);
-			
-		$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users
-				WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
-			
-		$query = $this->db->selectQuery($sql);
-			
-		if (sizeof($query) == 1) {
-			if (password_verify($this->core->getOriginalToken($username, $query[0]["user_lastActiveTime"]), $token)) {
-				$user_profile = $query;
-				return true;
 			}
 		}
 		

@@ -23,19 +23,19 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
 
 $APP_URL = "http://127.0.0.1/bonjour/";
 
-$db_params = array(
+/*$db_params = array(
 	"host" => "localhost", 
 	"username" => "bonjour_demo", 
 	"password" => "demo", 
 	"database" => "bonjour_demo",
-);
-/*
+);*/
+
 $db_params = array(
 	"host" => "localhost", 
 	"username" => "xb", 
 	"password" => "yBx7JRV7EuzqFYWf", 
 	"database" => "bonjour_demo",
 );
-*/
+
 require_once "include/class.Database.php";
 require_once "include/class.Core.php";

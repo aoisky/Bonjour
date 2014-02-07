@@ -24,8 +24,7 @@ class Core {
 	}
 	
 	public function jsonDump($data){
-		#$s = json_encode($data, JSON_PRETTY_PRINT);
-		$s = json_encode($data);
+		$s = json_encode($data, JSON_PRETTY_PRINT);
 		header("Content-Type: application/json");
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Content-Length: " . strlen($s));
@@ -48,10 +47,6 @@ class Core {
 		$this->jsonDump(array("code" => 400, "errno" => "002", "message" => "action not specified."));
 	}
 	
-	public function dieDbError() {
-		$this->jsonDump(array("code" => 500, "errno" => "001", "message" => "database query error."));
-	}
-	
 	public function exitLoginSuccess($param) {
 		$this->jsonDump(array("code" => 200, "access_token" => $param));
 	}
@@ -60,25 +55,12 @@ class Core {
 		$this->jsonDump(array("code" => 200, "access_token" => '"' + $token + '"'));
 	}
 	
-	/**
-	 * deprecated.
-	 */
 	public function getSalt() {
 		return base64_encode($this->tokenHash);
 	}
 	
-	public function getOriginalToken($u, $d) {
-		return base64_encode("token:" . $u . $d);
-	}
-	
 	public function getAccessToken($u, $d) {
-		return password_hash($this->getOriginalToken($u, $d), PASSWORD_DEFAULT);
-	}
-	
-	public function getPOST($ind) {
-		if (!isset($_POST[$ind])) return null;
-		
-		$str = urldecode($_POST[$ind]);
-		return stripslashes($str);
+		$p = password_hash("token:" + $u + $d, PASSWORD_BCRYPT, array("cost" => 7, "salt" => $this->getSalt()));
+		return $p;
 	}
 }
