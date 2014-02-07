@@ -2,6 +2,7 @@ package edu.purdue.cs.hineighbor;
 
 import java.util.Locale;
 
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -21,6 +22,9 @@ import android.widget.TextView;
 
 public class SignupActivity extends Activity {
 
+	
+	private Fragment fragmentTagBasic;
+	private Fragment fragmentTagUpload;
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -49,6 +53,7 @@ public class SignupActivity extends Activity {
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getFragmentManager());
 
+		
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -79,6 +84,7 @@ public class SignupActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
@@ -92,15 +98,33 @@ public class SignupActivity extends Activity {
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
-			Fragment fragment = new DummySectionFragment();
-			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);
-			return fragment;
+			switch(position){
+			
+			case 0:
+				Fragment signupBasicFragment = new SignupBasicFragment();
+				fragmentTagBasic = signupBasicFragment;
+				return signupBasicFragment;
+			
+			case 1:
+				Fragment signupUploadFragment = new SignupUploadFragment();
+				fragmentTagUpload = signupUploadFragment;
+				return new SignupUploadFragment();
+				
+			case 2:
+				return new SignupDetailsFragment();
+		}
+		
+		return null;
 		}
 
+		public Fragment getBasicFragment(){
+			return fragmentTagBasic;
+		}
+		
+		public Fragment getUploadFragment(){
+			return fragmentTagUpload;
+		}
+		
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
