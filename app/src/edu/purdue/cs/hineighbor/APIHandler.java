@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -36,10 +37,28 @@ public class APIHandler {
 	}
 	
 	public static String login(String userName, String password){
+		try {
+			userName = 	URLEncoder.encode(userName, "UTF-8");
+			password = URLEncoder.encode(password, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		String loginStr = String.format("action=login&username=%s&password=%s", userName, password);
 		
 		return apiConnection(loginStr);
 
+	}
+	
+	public static String register(String userName, String email, String password, String retype){
+		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, email,password,retype);
+		
+		if(password.equals(retype))
+			return null;
+		
+		return apiConnection(regStr);
+		
 	}
 	
 	/**
@@ -61,11 +80,12 @@ public class APIHandler {
 			urlConnect.setDoInput(true);
 			urlConnect.setDoOutput(true);
 		    urlConnect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-	        String encodeStr = URLEncoder.encode(requestStr, "UTF-8");
+
 	        OutputStream sendData = urlConnect.getOutputStream();
 	        BufferedWriter dataWriter = new BufferedWriter(new OutputStreamWriter(sendData));
-	        if(encodeStr != null)
-	        	dataWriter.write(encodeStr);
+	        if(requestStr != null)
+	        	Log.d(LOG_TAG,"Request String: " + requestStr); //Log Info for debug
+	        	dataWriter.write(requestStr);
 	        dataWriter.close();
 	        
 	        urlConnect.connect();
