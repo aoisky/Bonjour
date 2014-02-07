@@ -61,16 +61,20 @@ class Database {
 		if ($q){
 			//$q->free();
 			return true;
+		} else if ($DEBUG_MODE) {
+			die("Error message from Db: %s\n" . $this->db->error);
+		} else {
+			$this->core->dieDbError();
 		}
 		return false;
 	}
 	
 	function deleteQuery($sql){
-		insertQuery($sql);
+		$this->insertQuery($sql);
 	}
 	
 	function updateQuery($sql){
-		insertQuery($sql);
+		$this->insertQuery($sql);
 	}
 	
 }

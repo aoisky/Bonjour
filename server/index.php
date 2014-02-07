@@ -26,6 +26,19 @@
 
 </form>
 
+<h3>Log out</h3>
+<form method="post" action="action.php" name="loginform">
+	<input type="hidden" name="action" value="logout" />
+    <label for="login_input_username">Username</label>
+    <input id="login_input_username" class="login_input" type="text" name="username" required />
+
+    <label for="login_input_password">Token</label>
+    <input id="login_input_password" class="login_input" type="text" name="access_token" autocomplete="off" required />
+
+    <input type="submit" />
+
+</form>
+
 <h3>Register</h3>
 <form method="post" action="action.php" name="registerform">
 	<input type="hidden" name="action" value="register" />

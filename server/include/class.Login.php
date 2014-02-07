@@ -12,17 +12,23 @@ class Login{
 	
 	private $core = null;
 	private $db = null;
-	
 	public $error = "";
 	public $ret = "";
 	
-	public $user_profile = array();
+	public $user_profile = null;
+	private $logged_in = false;
 
-	public function __construct(Core $c, Database $d) {
-		// create/read session, absolutely necessary
-		session_start();
+	public function __construct(Core $c, Database $d, $t) {
 		$this->core = $c;
 		$this->db = $d;
+		
+		if ($t != ""){
+			$this->logged_in = $this->verifyToken($this->core->getPOST("username"), $t);
+		}
+	}
+	
+	public function isUser() {
+		return $this->logged_in;
 	}
 
 	public function logIn($username = "", $password = "", $token = "") {
@@ -45,23 +51,16 @@ class Login{
 			if ($rows == 1) {
 
 				if (password_verify($password, $query[0]["user_password"])) {
-					
+					$this->username = $username;
+					$this->user_profile = $query[0];
+					$this->logged_in = true;
 					$this->ret = $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
+					
 					if ($this->DEBUG_MODE) echo $this->ret;
-					// write user data into PHP SESSION (a file on your server)
-					//$_SESSION['user_name'] = $query[0]["user_name"];
-					//$_SESSION['user_email'] = $query[0]["user_email"];
-					//$_SESSION['user_login_status'] = 1;
 					
 					return true;
-					
-				} else {
-					$this->error = "Wrong password. Try again.";
-					
-				}
-			} else {
-				$this->error = "This user does not exist.";
-			}
+				} else $this->error = "Wrong password. Try again.";
+			} else $this->error = "This user does not exist.";
 		}
 		
 		return false;
@@ -73,15 +72,18 @@ class Login{
 		
 		$this->db->connect();
 		$username = $this->db->escapeStr($username);
-			
+		
 		$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users
 				WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
-			
+		
 		$query = $this->db->selectQuery($sql);
-			
-		if (sizeof($query) == 1) {
+		$rows = $this->db->getNumOfRecords();
+		
+		if ($rows == 1) {
 			if (password_verify($this->core->getOriginalToken($username, $query[0]["user_lastActiveTime"]), $token)) {
-				$user_profile = $query;
+				$this->username = $username;
+				$this->user_profile = $query[0];
+				$this->logged_in = true;
 				return true;
 			}
 		}
@@ -90,15 +92,11 @@ class Login{
 	}
 
 	public function logOut() {
+		if (!$this->logged_in) return;
 		
-		$this->db->updateQuery("UPDATE user_lastActiveTime=CURRENT_TIMESTAMP WHERE user_name='" + $_SESSION['user_name'] + "';");
-		
-		// delete the session of the user
-		$_SESSION = array();
-		session_destroy();
-		// return a little feeedback message
-		
-		return true;
+		$sql = "UPDATE users SET user_lastActiveTime=CURRENT_TIMESTAMP WHERE user_name='" . $this->user_profile["user_name"] . "';";
+		//echo $sql;
+		$this->db->updateQuery($sql);
 	}
 	
 }

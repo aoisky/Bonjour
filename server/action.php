@@ -5,48 +5,29 @@
  * The hub for all actions of the app
  *
  * @author	Xiangyu Bu
- * @date	Feb 06, 2014
+ * @date	Feb 07, 2014
  */
 
 require_once "config.inc.php";
 require_once "include/class.Login.php";
 
 $app = new Core();
-$database = new Database($db_params);
-
-$myFile = "testFile.txt";
-$fh = fopen($myFile, 'a') or die("can't open file");
-fwrite($fh, "POST:\n");
-fwrite($fh, implode("\n", $_POST));
-fclose($fh);
-
 if (!isset($_POST["action"])) $app->dieNoAction();
+
+$database = new Database($db_params);
 
 $action = $app->getPOST("action");
 $access_token = $app->getPOST("access_token");
 
-$isLoggedInUser = false;
-
-if ($access_token != ""){
-	$login = new Login($app, $database);
-	$isLoggedInUser = $login->verifyToken($app->getPOST("username"), $access_token);
-	
-	if ($isLoggedInUser) echo "Verified.";
-}
+$login = new Login($app, $database, $access_token);
 
 if ($action == "login"){
-	
-	$login = new Login($app, $database);
 	if ($login->logIn($app->getPOST("username"), $app->getPOST("password"), "")) {
 		$app->exitLoginSuccess($login->ret);
-	} else {
-		$app->dieLoginError($login->error);
-	}
+	} else $app->dieLoginError($login->error);
 } else if ($action == "logout") {
-	require_once "include/class.Login.php";
-	
-	$login = new Login($app, $database);
-	
+	$login->logOut();
+	$app->exitLogout();
 } else if ($action == "register") {
 	require_once "include/class.Registration.php";
 	
@@ -56,5 +37,12 @@ if ($action == "login"){
 		$app->exitRegisterSuccess($reg->ret);
 	else
 		$app->dieRegisterError($reg->error);
+} else if ($action == "update_profile") {
+	if (!$login->isUser()) $app->dieUnauthorized();
+	
+	//TODO: finish the stub
+	
+} else {
+	echo "Debug page<br>";
+	echo "Logged in: ". $login->isUser() . "<br>";
 }
-?>

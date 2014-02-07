@@ -36,20 +36,24 @@ class Core {
 		$this->jsonDump(array("code" => 400, "errno" => "001", "message" => $msg));
 	}
 	
-	public function dieLoginError($error) {
-		$this->jsonDump(array("code" => 400, "errno" => "200", "message" => $error));
+	public function dieNoAction() {
+		$this->jsonDump(array("code" => 400, "errno" => "002", "message" => "action not specified."));
+	}
+	
+	public function dieDbError() {
+		$this->jsonDump(array("code" => 500, "errno" => "003", "message" => "database query error."));
 	}
 	
 	public function dieRegisterError($error) {
 		$this->jsonDump(array("code" => 400, "errno" => "100", "message" => $error));
 	}
 	
-	public function dieNoAction() {
-		$this->jsonDump(array("code" => 400, "errno" => "002", "message" => "action not specified."));
+	public function dieLoginError($error) {
+		$this->jsonDump(array("code" => 400, "errno" => "200", "message" => $error));
 	}
 	
-	public function dieDbError() {
-		$this->jsonDump(array("code" => 500, "errno" => "001", "message" => "database query error."));
+	public function dieUnauthorized() {
+		$this->jsonDump(array("code" => 400, "errno" => "201", "message" => "You are unauthorized for this operation."));
 	}
 	
 	public function exitLoginSuccess($param) {
@@ -58,6 +62,10 @@ class Core {
 	
 	public function exitRegisterSuccess($token) {
 		$this->jsonDump(array("code" => 200, "access_token" => '"' + $token + '"'));
+	}
+	
+	public function exitLogout(){
+		$this->jsonDump(array("code" => 200, "access_token" => "", "message" => "successfully logged out."));
 	}
 	
 	/**
