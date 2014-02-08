@@ -23,4 +23,11 @@ unit_success("Connecting to Database...");
 $db->connect();
 
 unit_success("Phase 1: Connection successful.");
-?>
+
+$q = $db->selectQuery("SELECT * from users");
+$n = $db->getNumOfRecords();
+
+echo $n;
+$db->insertQuery("");
+$db->deleteQuery("");
+$db->updateQuery("");
