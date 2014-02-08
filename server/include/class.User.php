@@ -3,8 +3,12 @@
  * class.User.php
  *
  * The model for user identity module
- *
+ * @author	Xiangyu Bu
+ * @date	Feb 07, 2014
  */
+
+require_once "class.LoginException.php";
+require_once "class.RegisterException.php";
 
 class User{
 	
@@ -22,9 +26,8 @@ class User{
 		$this->core = $c;
 		$this->db = $d;
 		
-		if ($t != ""){
+		if ($t != "")
 			$this->logged_in = $this->verifyToken($this->core->getPOST("username"), $t);
-		}
 	}
 	
 	public function isUser() {

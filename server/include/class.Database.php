@@ -1,9 +1,9 @@
 <?php
 /**
- * Database Operations
+ * Database model
  *
  * @author	Xiangyu Bu
- * @date	Fed 05, 2014
+ * @date	Fed 07, 2014
  */
 
 class Database {
