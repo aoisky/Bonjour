@@ -53,6 +53,9 @@ if ($action == "login"){
 } else if ($action == "delete_photo") {
 	//TODO: finish the stub
 	
+} else if ($action == "get_profile") {
+	//TODO: finish the stub
+	
 } else {
 	echo "Debug page<br>";
 	echo "Logged in: ". $user->isUser() . "<br>";
