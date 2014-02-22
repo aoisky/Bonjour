@@ -33,7 +33,8 @@ public class SQLHandler extends SQLiteOpenHelper{
 	public static final String USER_AGE = "userage";
 	public static final String USER_GENDER = "gender";
 	public static final String USER_PASSWORD = "password";
-	public static final String USER_AVATAR_PATH = "useravatarpath";
+	public static final String USER_AVATAR_PATH = "user_avatar_path";
+	public static final String USER_ACCESS_TOKEN = "user_access_token";
 	public static final String USER_TIMESTAMP = "user_timestamp";
 	
 	public static final String FRIENDSLIST_USER_ID = "friendslist_user_id";
@@ -67,12 +68,13 @@ public class SQLHandler extends SQLiteOpenHelper{
 	private static final String USER_TABLE_CREATE = "CREATE TABLE " + USER_TABLE_NAME
 			+ " (" 
 			+ USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ USER_NAME + TEXT_TYPE + ","
-			+ USER_EMAIL + TEXT_TYPE + ","
-			+ USER_AGE + INTEGER_TYPE + ","
-			+ USER_PASSWORD + TEXT_TYPE + ","
-			+ USER_GENDER + INTEGER_TYPE + ","
+			+ USER_NAME + TEXT_TYPE + " NOT NULL,"
+			+ USER_EMAIL + TEXT_TYPE + "NOT NULL,"
+			+ USER_AGE + INTEGER_TYPE + "NOT NULL,"
+			+ USER_PASSWORD + TEXT_TYPE + "NOT NULL,"
+			+ USER_GENDER + INTEGER_TYPE + "NOT NULL,"
 			+ USER_AVATAR_PATH + TEXT_TYPE + ","
+			+ USER_ACCESS_TOKEN + TEXT_TYPE + ","
 			+ USER_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 			+ " )";
 	
@@ -122,6 +124,54 @@ public class SQLHandler extends SQLiteOpenHelper{
 		Log.d(LOG_TAG, "A user has been added to the database: " + userInfo.getUserName());
 
 		return rowid;
+	}
+	
+	/**
+	 * Get access token by userId
+	 * @param userId
+	 * @return user access token
+	 */
+	public String getUserAccessToken(int userId){
+		String getUserAccessQuery =  "SELECT " + USER_ACCESS_TOKEN + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = " + userId;
+	    SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(getUserAccessQuery, null);
+        
+        cursor.moveToFirst();
+        
+        if(cursor.isNull(0)){
+        	return null;
+        }
+        
+        return cursor.getString(0);
+
+	}
+	/**
+	 * Set access token by userId
+	 * @param userId
+	 * @param userAccessToken
+	 * @return true or false
+	 */
+	public boolean setUserAccessToken(int userId, String userAccessToken){
+		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = " + userId;
+	    SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(getUserQuery, null);
+        int count = cursor.getCount();
+        //Check if it exists the user or return false
+        if(count == 0){
+        	return false;
+        }
+		
+		ContentValues values = new ContentValues();
+		values.put(USER_ACCESS_TOKEN, userAccessToken);
+		
+		long error = db.insert(USER_TABLE_NAME, null, values);
+        
+		//If insert failed
+		if(error == -1){
+			return false;
+		}
+		
+		return true;
 	}
 	
     public int getFriendsCountByType(int userId, int friendType) {
