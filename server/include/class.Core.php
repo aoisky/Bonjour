@@ -7,12 +7,22 @@
  * Handles Json input and output
  * 
  * @author	Xiangyu Bu
- * @date	Feb 05, 2014
+ * @date	Feb 20, 2014
  */
 
+require_once "class.UserExceptions.php";
+ 
 class Core {
 	
 	public $username_pattern = "/^[-*_a-z0-9A-Z.]{4,20}$/";
+	
+	public $security_questions = array(
+		"sec_q01" => "What was your childhood nickname?",
+		"sec_q02" => "In what city or town was your first job?",
+		"sec_q03" => "Where were you when you had your first kiss?",
+		"sec_q04" => "What is the last name of your first boss?",
+		"sec_q05" => "How much was the first salary you received?"
+	);
 	
 	protected $tokenHash = "ThisBonjOURInstanceNeedsSalt";
 	
@@ -40,10 +50,6 @@ class Core {
 		$this->jsonDump(array("code" => 400, "errno" => "002", "message" => "action not specified."));
 	}
 	
-	public function dieDbError() {
-		$this->jsonDump(array("code" => 500, "errno" => "003", "message" => "database query error."));
-	}
-	
 	public function dieRegisterError($error) {
 		$this->jsonDump(array("code" => 400, "errno" => "100", "message" => $error));
 	}
@@ -52,20 +58,42 @@ class Core {
 		$this->jsonDump(array("code" => 400, "errno" => "200", "message" => $error));
 	}
 	
+	public function dieUserException(UserException $e, $extra = null){
+		$a = array(
+			"code" => $e->getCode(),
+			"errno" => $e->getErrno(),
+			"message" => $e->getMessage()
+		);
+		if ($extra != null)
+			$a = $a + $extra;
+		$this->jsonDump($a);
+	}
+	
 	public function dieUnauthorized() {
 		$this->jsonDump(array("code" => 400, "errno" => "201", "message" => "You are unauthorized for this operation."));
 	}
 	
-	public function exitLoginSuccess($param) {
-		$this->jsonDump(array("code" => 200, "access_token" => $param));
+	public function exitLoginSuccess($param, $extra = null) {
+		$a = array("code" => 200, "access_token" => $param);
+		if ($extra != null)
+			$a = $a + $extra;
+		$this->jsonDump($a);
 	}
 	
 	public function exitRegisterSuccess($token) {
-		$this->jsonDump(array("code" => 200, "access_token" => '"' + $token + '"'));
+		$this->jsonDump(array("code" => 200, "access_token" => $token));
 	}
 	
 	public function exitLogout(){
 		$this->jsonDump(array("code" => 200, "access_token" => "", "message" => "successfully logged out."));
+	}
+	
+	public function exitChangePassword(){
+		$this->jsonDump(array("code" => 200, "message" => "Password successfully changed."));
+	}
+	
+	public function exitWithArrayData($a){
+		$this->jsonDump(array("code" => 200, "data" => $a));
 	}
 	
 	/**
@@ -80,7 +108,9 @@ class Core {
 	}
 	
 	public function getAccessToken($u, $d) {
-		return password_hash($this->getOriginalToken($u, $d), PASSWORD_DEFAULT);
+		$t = $this->getOriginalToken($u, $d);
+		$p = password_hash($t, PASSWORD_DEFAULT);
+		return $p;
 	}
 	
 	public function getPOST($ind) {
@@ -89,4 +119,32 @@ class Core {
 		$str = urldecode($_POST[$ind]);
 		return stripslashes($str);
 	}
+	
+	public function isValidPassword($str){
+		$len = strlen($str);
+		if ($len >= 6 and $len <= 32) return true;
+		return false;
+	}
+	
+	public function isValidUserName($str){
+		$len = strlen($str);
+		if ($len >= 4 and $len <= 20 and preg_match($this->username_pattern, $str)) return true;
+		return false;
+	}
+	
+	public function isValidEmail($str){
+		return filter_var($str, FILTER_VALIDATE_EMAIL);
+	}
+	
+	public function sendEmail($address, $subject = "", $content = ""){
+		//TODO: finish this function
+		
+	}
+	
+	public function getRandomStr($len) {
+		$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		
+		return substr(str_shuffle(substr(str_shuffle($chars), 0, $len / 2 + 1) . substr(str_shuffle($chars), 0, $len / 2 + 1)), 0, $len);
+	}
+
 }

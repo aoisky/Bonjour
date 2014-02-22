@@ -4,11 +4,10 @@
  *
  * The model for user identity module
  * @author	Xiangyu Bu
- * @date	Feb 07, 2014
+ * @date	Feb 20, 2014
  */
 
-require_once "class.LoginException.php";
-require_once "class.RegisterException.php";
+require_once "class.UserExceptions.php";
 
 class User{
 	
@@ -16,8 +15,6 @@ class User{
 	
 	private $core = null;
 	private $db = null;
-	public $error = "";
-	public $ret = "";
 	
 	public $user_profile = null;
 	private $logged_in = false;
@@ -25,6 +22,7 @@ class User{
 	public function __construct(Core $c, Database $d, $t) {
 		$this->core = $c;
 		$this->db = $d;
+		$this->db->connect();
 		
 		if ($t != "")
 			$this->logged_in = $this->verifyToken($this->core->getPOST("username"), $t);
@@ -35,38 +33,30 @@ class User{
 	}
 
 	public function logIn($username = "", $password = "", $token = "") {
-		// check login form contents
-		if (!preg_match($this->core->username_pattern, $username) or $password == "") {
 		
-			$this->error = "Username or password not provided or of invalid format.";
+		if (!$this->core->isValidUserName($username) or !$this->core->isValidPassword($password))
+			throw new LoginException("Username or password not provided or of invalid format.");
 			
-		} else {
+		$username = $this->db->escapeStr($username);
 			
-			$this->db->connect();
-			
-			$username = $this->db->escapeStr($username);
-			
-			$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users ". 
-					"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
-			
-			$query = $this->db->selectQuery($sql);
-			$rows = $this->db->getNumOfRecords();
-			if ($rows == 1) {
-
-				if (password_verify($password, $query[0]["user_password"])) {
-					$this->username = $username;
-					$this->user_profile = $query[0];
-					$this->logged_in = true;
-					$this->ret = $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
-					
-					if ($this->DEBUG_MODE) echo $this->ret;
-					
-					return true;
-				} else $this->error = "Wrong password. Try again.";
-			} else $this->error = "This user does not exist.";
-		}
+		$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users ". 
+				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
 		
-		return false;
+		$query = $this->db->selectQuery($sql);
+		$rows = $this->db->getNumOfRecords();
+			
+		if ($rows == 1) {
+			if (password_verify($password, $query[0]["user_password"])) {
+				$this->username = $username;
+				$this->user_profile = $query[0];
+				$this->logged_in = true;
+				return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
+			} else 
+				throw new LoginException("Wrong password. Try again.");
+		} else
+				throw new LoginException("This user does not exist.");
+		
+		throw new LoginException("Unknown error.");
 	}
 	
 	public function verifyToken($username = "", $token = "") {
@@ -105,23 +95,23 @@ class User{
 	public function registerNewUser($username = "", $password = "", $repeatpass = "", $useremail = "") {
 	
 		if (empty($username)) {
-			$this->error = "Empty Username.";
+			throw new RegisterException("Empty Username.");
 		} elseif (empty($password) || empty($repeatpass)) {
-			$this->error = "Empty Password.";
+			throw new RegisterException("Empty Password.");
 		} elseif ($password !== $repeatpass) {
-			$this->error = "Password and password repeat are not the same.";
+			throw new RegisterException("Password and password repeat are not the same.");
 		} elseif (strlen($password) < 6) {
-			$this->error = "Password has a minimum length of 6 characters.";
+			throw new RegisterException("Password has a minimum length of 6 characters.");
 		} elseif (strlen($username) > 20 || strlen($username) < 4) {
-			$this->error = "Username cannot be shorter than 4 or longer than 20 characters.";
-		} elseif (!preg_match($this->core->username_pattern, $username)) {
-			$this->error = "Username does not fit the name pattern.";
-		} elseif (empty($useremail) or strlen($useremail) < 5) {
-			$this->error = "Email cannot be shorter than 50 characters.";
-		} elseif (strlen($useremail) > 64) {
-			$this->error = "Email cannot be longer than 64 characters.";
-		} elseif (!filter_var($useremail, FILTER_VALIDATE_EMAIL)) {
-			$this->error = "Your email address is not in a valid email format.";
+			throw new RegisterException("Username cannot be shorter than 4 or longer than 20 characters.");
+		} elseif (!$this->core->isValidUserName($username)) {
+			throw new RegisterException("Username does not fit the name pattern.");
+		} elseif (empty($useremail) or strlen($useremail) < 3) {
+			throw new RegisterException("Email cannot be shorter than 3 characters.");
+		} elseif (strlen($useremail) > 255) {
+			throw new RegisterException("Email cannot be longer than 255 characters.");
+		} elseif (!$this->core->isValidEmail($useremail)) {
+			throw new RegisterException("Your email address is not in a valid email format.");
 		} else {
 		
 			$this->db->connect();
@@ -137,7 +127,7 @@ class User{
 			$query_check_user_name = $this->db->selectQuery($sql);
 
 			if (sizeof($query_check_user_name) > 0) {
-				$this->error = "Sorry, that username or email address is already taken.";
+				throw new RegisterException("Sorry, that username or email address is already taken.");
 			} else {
 				// write new user's data into database
 				$sql = "INSERT INTO users (user_name, user_password, user_email)
@@ -146,19 +136,112 @@ class User{
 				if ($this->db->insertQuery($sql)) {
 					
 					$sql = "SELECT user_lastActiveTime FROM users WHERE user_name = '" . $username . "';";
-
+					
 					$query = $this->db->selectQuery($sql);
 
 					if (sizeof($query) == 1) {
-						$this->ret = $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
+						return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
 					}
 				
-					return true;
 				} else 
-					$this->error = "Sorry, your registration failed. Please go back and try again.";
+					throw new RegisterException("Sorry, your registration failed. Please go back and try again.");
 			}
 		}
 		
-		return false;
+		throw new RegisterException("Unknown error.");
+	}
+	
+	public function changePassword($userName = "", $oldPassword ="", $newPassword = "", $retypeNewPassword = "", $token = ""){
+	
+		if ($token != "" and !password_verify($userName . ":correct_ans", $token))
+			throw new ResetPassException("Unauthorized operation.");
+		
+		if ($userName == null or ($token == "" and $oldPassword == null) or $newPassword == null or $retypeNewPassword == null)
+			throw new ResetPassException("Username, old password, new password, and retype password must be filled in.");
+		
+		if ($token == "" and $oldPassword == $newPassword)
+			throw new ResetPassException("New password and old password must be different.");
+		
+		if ($newPassword != $retypeNewPassword)
+			throw new ResetPassException("New password and retype new password do not match.");
+		
+		if (!$this->core->isValidUserName($userName) or !$this->core->isValidPassword($newPassword) or ($token == "" and !$this->core->isValidPassword($oldPassword)))
+			throw new ResetPassException("Username or password are not of valid format.");
+		
+		
+		$sql = "SELECT user_name, user_email, user_password FROM users " .
+				"WHERE user_name = '" . $userName . "' OR user_email = '" . $userName . "';";
+		
+		$query = $this->db->selectQuery($sql);
+		$rows = $this->db->getNumOfRecords();
+		
+		if ($rows == 1) {
+			if ($token != "" or password_verify($oldPassword, $query[0]["user_password"])) {
+				$this->db->updateQuery("UPDATE users SET user_password=\"" . password_hash($newPassword, PASSWORD_DEFAULT) . "\" WHERE user_name = '" . $userName . "' OR user_email = '" . $userName . "';");
+			} else 
+				throw new ResetPassException("Username and password do not match, or user not registered.");
+		} else 
+			throw new ResetPassException("Username and password do not match, or user not registered.");
+	}
+	
+	public function getSecurityQuestionOfUser($username){
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
+			throw new ResetPassException("Username is empty or of invalid format.");
+		
+		$sql = "SELECT user_securityQuestion FROM users " .
+				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
+		
+		$query = $this->db->selectQuery($sql);
+		$rows = $this->db->getNumOfRecords();
+		
+		if ($rows == 1){
+			$q_id = $query[0]["user_securityQuestion"];
+			
+			if ($q_id == "")
+				throw new EmptyFieldException("The security question is unset.");
+			
+			if (!array_key_exists($q_id, $this->core->security_questions))
+				throw new EmptyFieldException("The stored security question is invalid.");
+			
+			return $this->core->security_questions[$q_id];
+			
+		} else 
+			throw new ResetPassException("The specified user does not exist.");
+	}
+	
+	public function verifySecurityAnswer($username, $answer){
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
+			throw new ResetPassException("Username is empty or of invalid format.");
+		
+		$sql = "SELECT user_lastActiveTime, user_securityAnswerHash FROM users " .
+				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
+		
+		$query = $this->db->selectQuery($sql);
+		$rows = $this->db->getNumOfRecords();
+		
+		if ($rows == 1){
+			if (password_verify($answer, $query[0]["user_securityAnswerHash"])) {
+				$this->username = $username;
+				$this->logged_in = true;
+				return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
+			} else 
+				throw new ResetPassException("Wrong security answer.");
+			
+		} else 
+			throw new ResetPassException("The specified user does not exist.");
+	}
+	
+	public function generateNewPassword($username, $token){
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
+			throw new ResetPassException("Username is empty or of invalid format.");
+		
+		if (!password_verify($username . ":reset_pass", $token))
+			throw new ResetPassException("Unauthorized operation.");
+		
+		$newpass = $this->core->getRandomStr(10);
+		
+		$this->changePassword($username, "", $newpass, $newpass, password_hash($username . ":correct_ans", PASSWORD_DEFAULT));
+		
+		return $newpass;
 	}
 }
