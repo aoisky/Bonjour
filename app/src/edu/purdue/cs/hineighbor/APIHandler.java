@@ -61,6 +61,14 @@ public class APIHandler {
 		
 	}
 	
+	
+	private static String getUserAccessToken(Context context, int userId){
+		SQLHandler sql = new SQLHandler(context);
+		String accessToken = sql.getUserAccessToken(userId);
+		
+		return accessToken;
+	}
+	
 	/**
 	 * Connect to the server
 	 * @param requestStr
