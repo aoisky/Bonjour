@@ -48,7 +48,6 @@ public class APIHandler {
 		String loginStr = String.format("action=login&username=%s&password=%s", userName, password);
 		
 		return apiConnection(loginStr);
-
 	}
 	
 	public static String register(String userName, String email, String password, String retype){
@@ -61,9 +60,45 @@ public class APIHandler {
 		
 	}
 	
+	public static boolean logout(Context context, int userId){
+		String accessToken = getUserAccessToken(context, userId);
+		String userName = getUserName(context, userId);
+		
+		String logoutStr = String.format("username=%s&access_token=%saction=logout", userName, accessToken);
+		
+		if(apiConnection(logoutStr) != null){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+	
+	public static boolean changePassword(Context context, int userId, String oldPassword, String newPassword, String retype){
+		String accessToken = getUserAccessToken(context, userId);
+		String userName = getUserName(context, userId);
+		
+		String changePasswordStr = String.format("username=%s&access_token=%s&oldpassword=%s&newpassword=%s&retype=%s&action=change_password", userName, accessToken, oldPassword, newPassword, retype);
+		
+		if(apiConnection(changePasswordStr) != null){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+	
+
+	
+    private static String getUserName(Context context, int userId){
+		SQLHandler sql = SQLHandler.getInstance(context);
+		String userName = sql.getUserNameByUserId(userId);
+		
+		return userName;
+    }
 	
 	private static String getUserAccessToken(Context context, int userId){
-		SQLHandler sql = new SQLHandler(context);
+		SQLHandler sql = SQLHandler.getInstance(context);
 		String accessToken = sql.getUserAccessToken(userId);
 		
 		return accessToken;

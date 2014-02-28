@@ -19,6 +19,8 @@ import android.util.Log;
  */
 public class SQLHandler extends SQLiteOpenHelper{
 
+	private static SQLHandler sqlHandler = null; 
+	
 	private static final String LOG_TAG = "SQLHandler";
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "BonjourSQL.db";
@@ -79,8 +81,22 @@ public class SQLHandler extends SQLiteOpenHelper{
 			+ " )";
 	
 	
-	public SQLHandler(Context context) {
+	private SQLHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+	
+	/**
+	 * Singleton architecture getInstance
+	 * @param context
+	 * @return SQLHandler
+	 */
+	public static SQLHandler getInstance(Context context){
+		
+		if(sqlHandler == null){
+			sqlHandler = new SQLHandler(context);
+		}
+		
+		return sqlHandler;
 	}
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -145,6 +161,21 @@ public class SQLHandler extends SQLiteOpenHelper{
         return cursor.getString(0);
 
 	}
+	
+	public String getUserNameByUserId(int userId){
+		String getUserQuery = "SELECT " + USER_NAME + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = " + userId;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(getUserQuery, null);
+		
+        cursor.moveToFirst();
+        
+        if(cursor.isNull(0)){
+        	return null;
+        }
+        return cursor.getString(0);
+		
+	}
+	
 	/**
 	 * Set access token by userId
 	 * @param userId
