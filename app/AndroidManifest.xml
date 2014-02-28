@@ -7,10 +7,10 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
-    
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -24,7 +24,6 @@
             android:name="edu.purdue.cs.hineighbor.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-
         </activity>
         <activity
             android:name="edu.purdue.cs.hineighbor.SignupActivity"
@@ -33,12 +32,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="me.imvoice.app.LoginActivity" />
-            
-                        <intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.HomeActivity"
+            android:label="@string/title_activity_home" >
         </activity>
     </application>
 
