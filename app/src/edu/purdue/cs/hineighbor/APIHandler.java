@@ -12,6 +12,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -65,9 +70,13 @@ public class APIHandler {
 		String userName = getUserName(context, userId);
 		
 		String logoutStr = String.format("username=%s&access_token=%saction=logout", userName, accessToken);
+		String responseStr = apiConnection(logoutStr);
 		
-		if(apiConnection(logoutStr) != null){
-			return true;
+		if(responseStr != null){
+			if(getResponseCode(responseStr) == 200)
+				return true;
+			else
+				return false;
 		}else{
 			return false;
 		}
@@ -79,22 +88,53 @@ public class APIHandler {
 		String userName = getUserName(context, userId);
 		
 		String changePasswordStr = String.format("username=%s&access_token=%s&oldpassword=%s&newpassword=%s&retype=%s&action=change_password", userName, accessToken, oldPassword, newPassword, retype);
+		String responseStr = apiConnection(changePasswordStr);
 		
 		if(apiConnection(changePasswordStr) != null){
-			return true;
+			if(getResponseCode(responseStr) == 200)
+				return true;
+			else
+				return false;
 		}else{
 			return false;
 		}
 
 	}
 	
-
-	
     private static String getUserName(Context context, int userId){
 		SQLHandler sql = SQLHandler.getInstance(context);
 		String userName = sql.getUserNameByUserId(userId);
-		
 		return userName;
+    }
+    
+    
+    private static String getStringFromJSON(String responseStr, String jsonIndex){
+        JSONParser parser = new JSONParser();
+        
+        try {
+			Object authJSON = parser.parse(responseStr);
+	        JSONArray authArray = (JSONArray)authJSON;
+	        JSONObject info = (JSONObject)authArray.get(0);
+	        return info.get(jsonIndex).toString();
+	        
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return null;
+    }
+    
+    private static int getResponseCode(String responseStr){
+        String responseCodeStr = getStringFromJSON(responseStr, "code");
+        int responseCode;
+        try{
+        responseCode = Integer.parseInt(responseCodeStr);
+        }catch(NumberFormatException e){
+        	responseCode = -1;
+        }
+        
+        return responseCode;
     }
 	
 	private static String getUserAccessToken(Context context, int userId){
