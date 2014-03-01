@@ -43,9 +43,11 @@
             android:name="edu.purdue.cs.hineighbor.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
+        <activity android:name="edu.purdue.cs.hineighbor.UserProfile" >
+        </activity>
         <activity
-            android:name="edu.purdue.cs.hineighbor.UserProfile"
-             >
+            android:name="edu.purdue.cs.hineighbor.HomeListLayoutActivity"
+            android:label="@string/title_activity_home_list_layout" >
         </activity>
     </application>
 
