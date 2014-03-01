@@ -43,6 +43,10 @@
             android:name="edu.purdue.cs.hineighbor.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.UserProfile"
+             >
+        </activity>
     </application>
 
 </manifest>
