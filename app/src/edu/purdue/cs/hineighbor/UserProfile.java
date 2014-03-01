@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 public class UserProfile extends Activity{
 
+	//UI references
 	TextView name = (TextView) findViewById(R.id.tvName);
 	TextView birthday = (TextView) findViewById(R.id.tvBirthday);
 	TextView gender = (TextView) findViewById(R.id.tvGender);
