@@ -192,6 +192,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         	return false;
         }
 		
+        db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(USER_ACCESS_TOKEN, userAccessToken);
 		
