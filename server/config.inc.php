@@ -33,6 +33,8 @@ $db_params = array(
 	"database" => "bonjour_demo",
 );
 
+$profile_fields = "gender|birthday|desiredRange|phone";
+
 /*
 $db_params = array(
 	"host" => "localhost", 

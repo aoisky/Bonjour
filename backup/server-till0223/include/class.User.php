@@ -8,7 +8,6 @@
  */
 
 require_once "class.UserExceptions.php";
-require_once "class.UserProfile.php";
 
 class User{
 	
@@ -19,18 +18,14 @@ class User{
 	
 	public $user_profile = null;
 	private $logged_in = false;
-	public $logged_in_user = "";
 
 	public function __construct(Core $c, Database $d, $t) {
 		$this->core = $c;
 		$this->db = $d;
 		$this->db->connect();
 		
-		if ($t != ""){
-			$u = $this->core->getPOST("username");
-			$this->logged_in = $this->verifyToken($u, $t);
-			if ($this->isUser()) $this->logged_in_user = $u;
-		}
+		if ($t != "")
+			$this->logged_in = $this->verifyToken($this->core->getPOST("username"), $t);
 	}
 	
 	public function isUser() {
@@ -92,7 +87,7 @@ class User{
 	public function logOut() {
 		if (!$this->logged_in) return;
 		
-		$sql = "UPDATE users SET user_lastActiveTime=CURRENT_TIMESTAMP WHERE user_name='" . $this->logged_in_user . "';";
+		$sql = "UPDATE users SET user_lastActiveTime=CURRENT_TIMESTAMP WHERE user_name='" . $this->user_profile["user_name"] . "';";
 		//echo $sql;
 		$this->db->updateQuery($sql);
 	}
@@ -248,29 +243,5 @@ class User{
 		$this->changePassword($username, "", $newpass, $newpass, password_hash($username . ":correct_ans", PASSWORD_DEFAULT));
 		
 		return $newpass;
-	}
-	
-	public function getProfile($username){
-		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
-			throw new UserProfileException("Username is empty or of invalid format.");
-		
-		$sql = "SELECT user_profile FROM users " .
-				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
-		
-		$query = $this->db->selectQuery($sql);
-		$rows = $this->db->getNumOfRecords();
-		
-		if ($rows == 1){
-			return new UserProfile(stripslashes($query[0]["user_profile"]));
-		} else 
-			throw new UserProfileException("The specified user does not exist.");
-	}
-	
-	public function setProfile($username, UserProfile $prof){
-		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
-			throw new UserProfileException("Username is empty or of invalid format.");
-		
-		$sql = "UPDATE users SET user_profile=\"" . $this->db->escapeStr($prof->toJsonStr()) . "\" WHERE user_name='" . $username . "' OR user_email='" . $username . "';";
-		$this->db->updateQuery($sql);
 	}
 }

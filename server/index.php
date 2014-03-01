@@ -1,3 +1,16 @@
+<?php
+/**
+ * index.php
+ * 
+ * A demo html UI. It does not do any sanity checking.
+ *
+ * @author	Xiangyu Bu
+ * @date	Feb 28, 2014
+ */
+
+include "config.inc.php";
+
+?>
 <h1>A demo html log in box</h1>
 
 <h3>Log in</h3>
@@ -111,6 +124,34 @@
     <label for="login_input_password">Answer</label>
     <input id="login_input_password" class="login_input" type="text" name="answer" autocomplete="off" required />
 
+    <input type="submit" />
+</form>
+
+<h3>Get Profile</h3>
+<form method="post" action="action.php" name="vqform">
+	<input type="hidden" name="action" value="getProfile" />
+    <label for="login_input_username">Username</label>
+    <input id="login_input_username" class="login_input" type="text" name="targetUser" required />
+    <input type="submit" />
+</form>
+
+<h3>Update Profile</h3>
+<form method="post" action="action.php" name="loginform">
+	<input type="hidden" name="action" value="updateProfile" />
+    <label for="up_input_username">Username</label>
+    <input id="up_input_username" class="login_input" type="text" name="username" required />
+	<br />
+    <label for="up_input_password">Token</label>
+    <input id="up_input_password" class="login_input" type="text" name="access_token" autocomplete="off" required />
+	<br />
+	<?php
+	$profile_fields_array = explode("|", $profile_fields);
+	foreach ($profile_fields_array as $key){
+		print "<label for=\"up_input_" . $key . "\">" . $key . "</label>\n";
+		print "<input id=\"up_input_" . $key . "\" class=\"login_input\" type=\"text\" name=\"" . $key . "\" autocomplete=\"off\" /><br />\n";	
+	}
+	?>
+	
     <input type="submit" />
 
 </form>

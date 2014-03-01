@@ -9,10 +9,13 @@
 
 class UserProfile {
 	private $data = array();
-		
+	
+	public function __construct(){
+	}
+	
 	public function __construct($str){
 		if ($str != "") {
-			$this->data = json_decode($str, true);
+			$this->data = json_decode($str);
 		}
 	}
 	
@@ -28,23 +31,16 @@ class UserProfile {
 	}
 	
 	public function updateField($f, $v){
-		if ($this->hasField($f)){
-			$this->removeField($f);
-		}
-		$this->addField($f, $v);
+		if ($this->hasField($f)) $this->data[$f] = $v;
+		else $this->addField($f, $v);
 	}
 	
 	public function removeField($f){
-		if (!$this->hasField($f)) return;
-		if (empty($this->data)) return;
-		unset($this->data[array_search($f, $this->data)]);
+		if ($this->hasField($f))
+			unset($this->data[$f]);
 	}
 	
 	public function toJsonStr(){
 		return json_encode($this->data);
-	}
-	
-	public function getArray(){
-		return $this->data;
 	}
 }

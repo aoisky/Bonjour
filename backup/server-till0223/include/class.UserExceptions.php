@@ -43,9 +43,3 @@ class EmptyFieldException extends UserException {
 		parent::__construct($message, 400, "400");
 	}
 }
-
-class UserProfileException extends UserException {
-	public function __construct($message = ""){
-		parent::__construct($message, 400, "500");
-	}
-}
