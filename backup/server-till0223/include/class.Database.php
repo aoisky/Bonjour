@@ -3,11 +3,11 @@
  * Database model
  *
  * @author	Xiangyu Bu
- * @date	Fed 07, 2014
+ * @date	Fed 20, 2014
  */
 
 class Database {
-	private $DEBUG_MODE = false;
+	private $DEBUG_MODE = true;
 	
 	private $db = null;
 	private $dbParams;
@@ -42,7 +42,7 @@ class Database {
 				$a[] = $row;
 			}
 			$q->free();
-		} else if ($DEBUG_MODE) {
+		} else if ($this->DEBUG_MODE) {
 			die("Error message from Db: %s\n" . $this->db->error);
 		} else {
 			$this->core->dieDbError();
@@ -64,7 +64,7 @@ class Database {
 		} else if ($DEBUG_MODE) {
 			die("Error message from Db: %s\n" . $this->db->error);
 		} else {
-			$this->core->dieDbError();
+			$this->dieDbError();
 		}
 		return false;
 	}
@@ -77,4 +77,16 @@ class Database {
 		$this->insertQuery($sql);
 	}
 	
+	public function jsonDump($data){
+		#$s = json_encode($data, JSON_PRETTY_PRINT);
+		$s = json_encode($data);
+		header("Content-Type: application/json");
+		header("Cache-Control: no-cache, must-revalidate");
+		header("Content-Length: " . strlen($s));
+		die($s);
+	}
+	
+	public function dieDbError() {
+		$this->jsonDump(array("code" => 500, "errno" => "003", "message" => "database query error."));
+	}
 }

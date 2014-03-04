@@ -98,43 +98,15 @@ if ($action == "register"){
 	} catch (ResetPassException $e) {
 		$app->dieUserException($e);
 	}
-} else if ($action == "getProfile") {
-	//TODO: finish the stub
-	try {
-		$targetUser = $app->getPOST("targetUser");
-		$profile = $user->getProfile($targetUser)->getArray();
-		$app->exitWithArrayData($profile);
-	} catch (UserProfileException $e) {
-		$app->dieUserException($e);
-	}
 }
+
 
 if (!$user->isUser()) $app->dieUnauthorized();
 	
-if ($action == "updateProfile") {
+if ($action == "update_profile") {
 	// update user profile
 	
-	try {
-		$myProfile = $user->getProfile($user->logged_in_user);
-		$profile_fields_array = explode("|", $profile_fields);
-		foreach ($profile_fields_array as $key){
-			if (isset($_POST[$key])){
-				$v = $app->getPOST($key);
-				if ($key == "birthday"){
-					$f = explode("-", $v);	//YYYY-mm-dd
-					if (!checkdate($f[1], $f[2], $f[0]))
-						throw new UserProfileException("The birthday format is not valid.");
-				}
-				$myProfile->updateField($key, $v);
-			} else {
-				$myProfile->removeField($key);
-			}
-		}
-		$user->setProfile($user->logged_in_user, $myProfile);
-		$app->exitWithArrayData($myProfile->getArray());
-	} catch (UserProfileException $e) {
-		$app->dieUserException($e);
-	}
+	//TODO: finish the stub
 	
 } else if ($action == "update_photo") {
 	//TODO: finish the stub
@@ -148,10 +120,13 @@ if ($action == "updateProfile") {
 } else if ($action == "delete_photo") {
 	//TODO: finish the stub
 	
+} else if ($action == "get_profile") {
+	//TODO: finish the stub
+	
 } else if ($action == "change_password") {
 	
 	try {
-		
+	
 		$uname = $app->getPOST("username");
 		$uoldpass = $app->getPOST("oldpassword");
 		$unewpass = $app->getPOST("newpassword");
