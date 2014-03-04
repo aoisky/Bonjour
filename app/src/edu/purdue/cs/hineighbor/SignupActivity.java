@@ -44,7 +44,12 @@ public class SignupActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signup);
-
+		
+		//Set actionBar background
+		ColorDrawable background = new ColorDrawable(Color.parseColor("#00A9FF"));
+		background.setAlpha(150);
+		getActionBar().setBackgroundDrawable(background);
+		
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -136,11 +141,11 @@ public class SignupActivity extends Activity {
 			Locale l = Locale.getDefault();
 			switch (position) {
 			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
+				return getString(R.string.signup_basic_info).toUpperCase(l);
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
+				return getString(R.string.signup_upload_icon).toUpperCase(l);
 			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
+				return getString(R.string.signup_detail_info).toUpperCase(l);
 			}
 			return null;
 		}

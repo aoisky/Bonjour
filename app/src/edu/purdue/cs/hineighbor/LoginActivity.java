@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -47,6 +49,7 @@ public class LoginActivity extends Activity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
+	private Button registerButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,8 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
+		registerButton =  (Button) findViewById(R.id.register_button);
+		
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 		mEmailView = (EditText) findViewById(R.id.email);
 		mEmailView.setText(mEmail);
@@ -72,7 +77,24 @@ public class LoginActivity extends Activity {
 						return false;
 					}
 				});
-
+		
+		//Register button
+		registerButton.setOnClickListener(
+	    new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent registerIntent = new Intent(LoginActivity.this,SignupActivity.class);
+				registerIntent.putExtra("email", mEmailView.getText().toString());
+				registerIntent.putExtra("password", mPasswordView.getText().toString());
+	    		
+	    		startActivity(registerIntent);
+			}
+		}			
+				
+	);
+		
+		
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);

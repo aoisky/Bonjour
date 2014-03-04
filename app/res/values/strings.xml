@@ -13,5 +13,8 @@
     <string name="display_date">Date</string>
     <string name="account_manage_button">Manage My Account</string>
     <string name="title_activity_home_list_layout">HomeListLayoutActivity</string>
+    <string name="signup_basic_info">Basic Information</string>
+    <string name="signup_upload_icon">Upload User Icon</string>
+    <string name="signup_detail_info">Detail Inforamtion</string>
 
 </resources>
