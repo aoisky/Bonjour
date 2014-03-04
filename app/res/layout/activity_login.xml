@@ -40,6 +40,24 @@
             style="@style/LoginFormContainer"
             android:orientation="vertical" >
 
+                        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+            <!--  App icon -->                
+                <ImageView
+                    android:id="@+id/imageViewLogo"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/ic_launcher" 
+                    android:layout_marginBottom="100dp"
+                    android:contentDescription="Bonjour Icon"/>
+
+            </RelativeLayout>
+            
             <EditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
@@ -61,6 +79,20 @@
                 android:maxLines="1"
                 android:singleLine="true" />
 
+            
+          		 <LinearLayout
+		     android:layout_width="wrap_content"
+		     android:layout_height="wrap_content"
+		     android:layout_gravity="center" >  
+		     <Button 
+		         android:id="@+id/register_button"
+		         android:layout_width="wrap_content"
+          		 android:layout_height="wrap_content"
+          		 android:layout_gravity="left"
+          		 android:layout_marginTop="16dp"
+                 android:paddingLeft="32dp"
+                 android:paddingRight="32dp"
+          		 android:text="@string/register" />    
             <Button
                 android:id="@+id/sign_in_button"
                 android:layout_width="wrap_content"
@@ -70,6 +102,8 @@
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:text="@string/action_sign_in_register" />
+            
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
