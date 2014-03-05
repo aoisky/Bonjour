@@ -8,10 +8,10 @@ import android.widget.TextView;
 public class UserProfile extends Activity{
 
 	//UI references
-	TextView name = (TextView) findViewById(R.id.tvName);
-	TextView birthday = (TextView) findViewById(R.id.tvBirthday);
-	TextView gender = (TextView) findViewById(R.id.tvGender);
-	TextView hobbies = (TextView) findViewById(R.id.tvHobbies);
+	TextView name = (TextView) findViewById(R.id.nameOfUser);
+	TextView birthday = (TextView) findViewById(R.id.birthday);
+	TextView gender = (TextView) findViewById(R.id.gender);
+	TextView hobbies = (TextView) findViewById(R.id.hobbies);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
