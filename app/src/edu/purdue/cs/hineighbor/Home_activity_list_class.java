@@ -11,6 +11,9 @@ public class Home_activity_list_class {
 		return name;
 	}
 	
+	public void setHobby(String hobbies){
+		this.hobbies = hobbies;
+	}
 	public Home_activity_list_class(String name, String hobbies){
 		this.name = name;
 		this.hobbies = hobbies;
