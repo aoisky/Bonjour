@@ -17,23 +17,23 @@
         android:padding="3dip" >
 
         <ImageView
-            android:id="@+id/avatar_image"
+            android:id="@+id/list_avatar_image"
             android:layout_width="80dip"
             android:layout_height="80dp"
             android:contentDescription="UserImage" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/list_hobbies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/list_username"
+        android:layout_below="@+id/list_username"
         android:text="Hobbies"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/list_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/articleLinear"
@@ -42,11 +42,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/list_detail_hobbies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/list_hobbies"
+        android:layout_below="@+id/list_hobbies"
         android:layout_marginLeft="43dp"
         android:text="(detail of hobbies)"
         android:textAppearance="?android:attr/textAppearanceSmall" />

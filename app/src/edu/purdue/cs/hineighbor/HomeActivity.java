@@ -3,6 +3,7 @@ package edu.purdue.cs.hineighbor;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.widget.ListView;
 
 public class HomeActivity extends Activity {
 
@@ -10,6 +11,8 @@ public class HomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+		
+		ListView listview = (ListView)findViewById(R.id.listView_home); 
 	}
 
 	@Override
