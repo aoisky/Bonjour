@@ -22,10 +22,12 @@ public class UserInfo{
 	private String email;
 	private String md5Password;
 	private boolean gender;
+	private String accessToken;
 	
-	public UserInfo(String userName, int uid, Bitmap userAvatar, int age, String email, String md5Password, boolean gender){
+	public UserInfo(String userName, String accessToken, int uid, Bitmap userAvatar, int age, String email, String md5Password, boolean gender){
 		this.uid = uid;
 		this.userName = userName;
+		this.accessToken = accessToken;
 		this.userAvatar = userAvatar;
 		this.age = age;
 		this.email = email;
@@ -35,6 +37,10 @@ public class UserInfo{
 	
 	public int getuid(){
 		return uid;
+	}
+	
+	public String getUserAccessToken(){
+		return accessToken;
 	}
 	
 	public String getUserName(){
@@ -61,4 +67,17 @@ public class UserInfo{
 		return gender;
 	}
 
+	public int getIntGender(){
+		if(gender == true){	
+			
+			return 1;
+			
+		} else{
+			
+			return 0;	
+			
+		}
+
+	}
+		
 }

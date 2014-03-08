@@ -114,12 +114,18 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 			gender = true;
 		}
 		
+		int age = Integer.parseInt(ageEdit.getText().toString());
 		
-	
-
-
-		Toast.makeText(getActivity(), "Register successful", Toast.LENGTH_SHORT).show();
+		long userId = APIHandler.register(this.getActivity(), email, password, confirmPassword, gender, age, userIconBitmap);
+		
+		if(userId != -1){
+			Toast.makeText(getActivity(), "Register successful", Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+		}
+		
 		getActivity().finish();
+		
 		
 	}
 }

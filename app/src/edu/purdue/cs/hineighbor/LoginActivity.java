@@ -3,8 +3,11 @@ package edu.purdue.cs.hineighbor;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,8 +29,6 @@ public class LoginActivity extends Activity {
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
 	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-			"foo@example.com:hello", "bar@example.com:world" };
 
 	/**
 	 * The default email to populate the email field with.
@@ -51,12 +52,25 @@ public class LoginActivity extends Activity {
 	private TextView mLoginStatusMessageView;
 	private Button registerButton;
 
+	/**
+	 * Set background of the actionBar
+	 * @param actionBar
+	 */
+	private void setActionBar(ActionBar actionBar){
+		//Set the background of action Bar
+		ColorDrawable background = new ColorDrawable(Color.parseColor("#00A9FF"));
+		background.setAlpha(150);
+		actionBar.setBackgroundDrawable(background);
+
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_login);
-
+		setActionBar(this.getActionBar());
+		
 		// Set up the login form.
 		registerButton =  (Button) findViewById(R.id.register_button);
 		
@@ -217,38 +231,28 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+	public class UserLoginTask extends AsyncTask<Void, Void, Long> {
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Long doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
 
 			try {
 				
-				APIHandler.login("aoisky", "777777q1");  //Login Test
+				Long userId = APIHandler.login(LoginActivity.this, mEmail, mPassword);  //Login Test
 				// Simulate network access.
 				Thread.sleep(2000);
+				return userId;
 			} catch (InterruptedException e) {
-				return false;
+				return -1L;
 			}
-
-			for (String credential : DUMMY_CREDENTIALS) {
-				String[] pieces = credential.split(":");
-				if (pieces[0].equals(mEmail)) {
-					// Account exists, return true if the password matches.
-					return pieces[1].equals(mPassword);
-				}
-			}
-
-			// TODO: register the new account here.
-			return true;
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success) {
+		protected void onPostExecute(final Long success) {
 			mAuthTask = null;
 			showProgress(false);
 
-			if (success) {
+			if (success != -1) {
 				finish();
 			} else {
 				mPasswordView
