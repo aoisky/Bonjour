@@ -14,7 +14,6 @@ require_once "class.UserExceptions.php";
  
 class Core {
 	
-	// username has at most 20 chars
 	public $username_pattern = "/^[-*_a-z0-9A-Z.]{4,20}$/";
 	
 	public $security_questions = array(
@@ -121,11 +120,9 @@ class Core {
 		return stripslashes($str);
 	}
 	
-	// A user password is defined to be 
-	// a string of length 6 to 32, allowing special characters.
 	public function isValidPassword($str){
 		$len = strlen($str);
-		if ($len >= 6 and $len <= 33) return true;
+		if ($len >= 6 and $len <= 32) return true;
 		return false;
 	}
 	
@@ -140,7 +137,8 @@ class Core {
 	}
 	
 	public function sendEmail($address, $subject = "", $content = ""){
-		// removed code
+		//TODO: finish this function
+		
 	}
 	
 	public function getRandomStr($len) {
@@ -148,10 +146,5 @@ class Core {
 		
 		return substr(str_shuffle(substr(str_shuffle($chars), 0, $len / 2 + 1) . substr(str_shuffle($chars), 0, $len / 2 + 1)), 0, $len);
 	}
-	
-	public function filterHtml($str){
-		// removed htmlencode code
-		
-		return $str;
-	}
+
 }

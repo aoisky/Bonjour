@@ -125,7 +125,7 @@ if ($action == "updateProfile") {
 					if (!checkdate($f[1], $f[2], $f[0]))
 						throw new UserProfileException("The birthday format is not valid.");
 				}
-				$myProfile->updateField($key, $app->filterHtml($v));
+				$myProfile->updateField($key, $v);
 			} else {
 				$myProfile->removeField($key);
 			}
@@ -163,44 +163,7 @@ if ($action == "updateProfile") {
 	} catch (ResetPassException $e) {
 		$app->dieUserException($e);
 	}
-
-} else if ($action == "match") {
-	try {
-		//"SELECT id, nom,ouverture, adresse, telephone, mail,( 3959 * acos( cos( radians(43.493655) ) * cos( radians(" &  latitude & ") ) * cos( radians(" &  longitude & ") - radians(-1.474941) ) + sin( radians(43.493655) ) * sin( radians(" &  latitude & ") ) ) ) AS distance FROM kindabreak HAVING distance < 150 ORDER BY distance LIMIT 0 , 20"
-		$data = $app->getPOST("data");
-		$data = base64_decode($data);
-		
-		$json = json_decode($data, true);
-		$json_errno = json_last_error();
-		
-		if ($json_errno){
-			$err_msg = "";
-			switch ($json_errno){
-				case JSON_ERROR_DEPTH:
-					$err_msg = 'Maximum stack depth exceeded';
-					break;
-				case JSON_ERROR_STATE_MISMATCH:
-					$err_msg = 'Underflow or the modes mismatch';
-					break;
-				case JSON_ERROR_CTRL_CHAR:
-					$err_msg = 'Unexpected control character found';
-					break;
-				case JSON_ERROR_SYNTAX:
-					$err_msg = 'Syntax error, malformed JSON';
-					break;
-				case JSON_ERROR_UTF8:
-					$err_msg = 'Malformed UTF-8 characters, possibly incorrectly encoded';
-					break;
-				default:
-					$err_msg = 'Unknown error';
-					break;
-			}
-			$app->returnJsonError($err_msg);
-		}
-	    
-		
-	} catch (Exception $e){
-	}
+	
 } else {
 	echo "Debug page<br>";
 	echo "Logged in: ". $user->isUser() . "<br>";
