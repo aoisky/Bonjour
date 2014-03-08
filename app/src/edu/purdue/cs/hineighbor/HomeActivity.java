@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import edu.purdue.cs.hineighbor.SQLHandler;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -13,6 +13,7 @@ import android.widget.SimpleAdapter;
 
 public class HomeActivity extends Activity {
 
+	SQLHandler sqlhandler = SQLHandler.getInstance(this);
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,7 +26,9 @@ public class HomeActivity extends Activity {
 	private List<Map<String, Object>> getData() {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("Name", "user1");
+		
+		
+	/*	map.put("Name", "user1");
 		map.put("info", "hobbies 1");
 		map.put("img", R.drawable.bonjour_icon);
 		list.add(map);
@@ -40,7 +43,9 @@ public class HomeActivity extends Activity {
 		map.put("Name", "user3");
 		map.put("info", "hobbies 3");
 		map.put("img", R.drawable.bonjour_icon);
-		list.add(map);
+		list.add(map);*/
+		
+		
 		
 		return list;
 	}
