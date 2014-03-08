@@ -25,21 +25,21 @@ public class HomeActivity extends Activity {
 	private List<Map<String, Object>> getData() {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("Name", "G1");
-		map.put("info", "google 1");
-		map.put("img", R.drawable.nouser);
+		map.put("Name", "user1");
+		map.put("info", "hobbies 1");
+		map.put("img", R.drawable.bonjour_icon);
 		list.add(map);
 
 		map = new HashMap<String, Object>();
-		map.put("Name", "G2");
-		map.put("info", "google 2");
-		map.put("img", R.drawable.nouser);
+		map.put("Name", "uesr2");
+		map.put("info", "hobbies 2");
+		map.put("img", R.drawable.bonjour_icon);
 		list.add(map);
 
 		map = new HashMap<String, Object>();
-		map.put("Name", "G3");
-		map.put("info", "google 3");
-		map.put("img", R.drawable.nouser);
+		map.put("Name", "user3");
+		map.put("info", "hobbies 3");
+		map.put("img", R.drawable.bonjour_icon);
 		list.add(map);
 		
 		return list;
