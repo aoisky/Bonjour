@@ -16,5 +16,6 @@
     <string name="signup_basic_info">Basic Information</string>
     <string name="signup_upload_icon">Upload User Icon</string>
     <string name="signup_detail_info">Detail Inforamtion</string>
+    <string name="action_logout">Logout</string>
 
 </resources>

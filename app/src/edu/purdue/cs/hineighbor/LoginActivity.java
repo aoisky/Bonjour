@@ -35,6 +35,7 @@ public class LoginActivity extends Activity {
 	 */
 	public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
 
+	public static final String USER_ID = "userId";
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
@@ -252,6 +253,10 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 
 			if (success != -1) {
+				Intent homeIntent = new Intent(getBaseContext(), HomeActivity.class);
+				
+				homeIntent.putExtra(USER_ID, success);
+				startActivity(homeIntent);
 				finish();
 			} else {
 				mPasswordView
