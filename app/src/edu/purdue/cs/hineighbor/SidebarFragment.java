@@ -66,9 +66,9 @@ public class SidebarFragment extends ListFragment {
 	    super.onActivityCreated(savedInstanceState);
 
 	    //MenuItem homeMenu = new MenuItem(new ColorDrawable(Color.parseColor("#00A9FF")), "Home");
-	    MenuItem newArticleMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_edit), "New Article");
+	    MenuItem newArticleMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_edit), "Control Panel");
 	    MenuItem userMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_person), "User");
-	    MenuItem myArticleMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_unread), "My Article");
+	    MenuItem myArticleMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_unread), "My Friends");
 	    //MenuItem favoriteMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_favorite), "Favorite");
 	    MenuItem helpMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_help), "Help");
 	    MenuItem aboutMenu = new MenuItem(getResources().getDrawable(R.drawable.ic_action_about), "About");
@@ -115,7 +115,7 @@ public class SidebarFragment extends ListFragment {
 	
 	private void showAbout(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		  builder.setMessage("VoiceMe Version 1.0 Beta\n")
+		  builder.setMessage("Bonjour Version 1.0 Beta\n")
 		  .setTitle("About Us")
 		  .setCancelable(false)
 		  .setPositiveButton("OK", new DialogInterface.OnClickListener() {
