@@ -81,6 +81,11 @@ public class HomeActivity extends Activity {
 		
 		sidebar = new SidebarFragment();
 
+		Bundle bundle = new Bundle();
+		bundle.putLong(LoginActivity.USER_ID, userId);
+		
+		sidebar.setArguments(bundle);
+		
 		transaction.replace(android.R.id.content, sidebar);
 		transaction.setCustomAnimations(R.anim.slide_enter, R.anim.slide_exit);
 		//transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

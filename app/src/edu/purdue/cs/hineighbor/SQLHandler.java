@@ -168,6 +168,27 @@ public class SQLHandler extends SQLiteOpenHelper{
 		
 	}
 	
+	public String getGenderByUserId(int userId){
+		String getUserQuery = "SELECT " + USER_GENDER + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = \"" + userId + "\"";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(getUserQuery, null);
+		
+        cursor.moveToFirst();
+        
+        if(cursor.isNull(0)){
+        	return null;
+        }
+        
+        int intGender = cursor.getInt(0);
+        
+        if(intGender == 1){
+        	return "Female";
+        }else{
+        	return "Male";
+        }
+		
+	}
+	
 	
 	public boolean setUserAccessToken(String userName, String userAccessToken){
 		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE \"" + USER_NAME + "\" = \"" + userName + "\"";
@@ -223,6 +244,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 		
 		return true;
 	}
+	
 	
     public int getFriendsCountByType(int userId, int friendType) {
         String countQuery = "SELECT * FROM " + FRIENDS_TABLE_NAME + " WHERE " + FRIEND_TYPE + " = " + friendType + " AND " + FRIENDSLIST_USER_ID + " = " + userId;
