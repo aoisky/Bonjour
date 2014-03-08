@@ -25,9 +25,7 @@ class Database {
 	public function connect(){
 		if ($this->db) return;
 		$this->db = new mysqli($this->dbParams["host"], $this->dbParams["username"], $this->dbParams["password"], $this->dbParams["database"]);
-		if (!$this->db)
-			//die("Database connection error.");
-			die("Connect failed: %s\n" + mysqli_connect_error());
+		if (!$this->db) die("Connect failed: %s\n" + mysqli_connect_error());
 	}
 	
 	public function escapeStr($str){

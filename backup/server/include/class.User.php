@@ -39,7 +39,7 @@ class User{
 
 	public function logIn($username = "", $password = "", $token = "") {
 		
-		if ((!$this->core->isValidUserName($username) and !$this->core->isValidEmail($username)) or !$this->core->isValidPassword($password))
+		if (!$this->core->isValidUserName($username) or !$this->core->isValidPassword($password))
 			throw new LoginException("Username or password not provided or of invalid format.");
 			
 		$username = $this->db->escapeStr($username);
@@ -52,7 +52,7 @@ class User{
 			
 		if ($rows == 1) {
 			if (password_verify($password, $query[0]["user_password"])) {
-				$this->username = $query[0]["user_name"];
+				$this->username = $username;
 				$this->user_profile = $query[0];
 				$this->logged_in = true;
 				return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
@@ -66,7 +66,7 @@ class User{
 	
 	public function verifyToken($username = "", $token = "") {
 		if ($username == "" or $token == "") return false;
-		if (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)) return false;
+		if (!preg_match($this->core->username_pattern, $username)) return false;
 		
 		$this->db->connect();
 		$username = $this->db->escapeStr($username);
@@ -170,7 +170,7 @@ class User{
 		if ($newPassword != $retypeNewPassword)
 			throw new ResetPassException("New password and retype new password do not match.");
 		
-		if ((!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)) or !$this->core->isValidPassword($newPassword) or ($token == "" and !$this->core->isValidPassword($oldPassword)))
+		if (!$this->core->isValidUserName($userName) or !$this->core->isValidPassword($newPassword) or ($token == "" and !$this->core->isValidPassword($oldPassword)))
 			throw new ResetPassException("Username or password are not of valid format.");
 		
 		
@@ -190,7 +190,7 @@ class User{
 	}
 	
 	public function getSecurityQuestionOfUser($username){
-		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
 			throw new ResetPassException("Username is empty or of invalid format.");
 		
 		$sql = "SELECT user_securityQuestion FROM users " .
@@ -215,7 +215,7 @@ class User{
 	}
 	
 	public function verifySecurityAnswer($username, $answer){
-		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
 			throw new ResetPassException("Username is empty or of invalid format.");
 		
 		$sql = "SELECT user_lastActiveTime, user_securityAnswerHash FROM users " .
@@ -237,7 +237,7 @@ class User{
 	}
 	
 	public function generateNewPassword($username, $token){
-		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
 			throw new ResetPassException("Username is empty or of invalid format.");
 		
 		if (!password_verify($username . ":reset_pass", $token))
@@ -251,7 +251,7 @@ class User{
 	}
 	
 	public function getProfile($username){
-		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
 			throw new UserProfileException("Username is empty or of invalid format.");
 		
 		$sql = "SELECT user_profile FROM users " .
@@ -267,7 +267,7 @@ class User{
 	}
 	
 	public function setProfile($username, UserProfile $prof){
-		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
+		if ($username == null or $username == "" or !$this->core->isValidUserName($username))
 			throw new UserProfileException("Username is empty or of invalid format.");
 		
 		$sql = "UPDATE users SET user_profile=\"" . $this->db->escapeStr($prof->toJsonStr()) . "\" WHERE user_name='" . $username . "' OR user_email='" . $username . "';";
