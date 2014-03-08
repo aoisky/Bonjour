@@ -25,8 +25,7 @@
             android:name="edu.purdue.cs.hineighbor.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-            
-                <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,8 +38,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="me.imvoice.app.LoginActivity" />
-
-
         </activity>
         <activity
             android:name="edu.purdue.cs.hineighbor.HomeActivity"
@@ -51,6 +48,10 @@
         <activity
             android:name="edu.purdue.cs.hineighbor.HomeListLayoutActivity"
             android:label="@string/title_activity_home_list_layout" >
+        </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.HelpActivity"
+            android:label="@string/title_activity_help" >
         </activity>
     </application>
 
