@@ -16,22 +16,15 @@
         android:background="#000000" />
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/listView_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textViewLine" >
+        android:layout_below="@+id/textViewLine"
+        tools:listitem="@layout/activity_home_list_layout" >
 
     </ListView>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/listView_home"
-        android:text="@string/display_date" />
 
     <Button
         android:id="@+id/button1"
