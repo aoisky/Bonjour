@@ -52,7 +52,7 @@
                     android:layout_height="200dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:src="@drawable/ic_launcher" 
+                    android:src="@drawable/bonjour_icon" 
                     android:layout_marginBottom="100dp"
                     android:contentDescription="Bonjour Icon"/>
 

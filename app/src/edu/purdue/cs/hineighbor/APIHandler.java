@@ -18,6 +18,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -41,7 +42,7 @@ public class APIHandler {
 		return false;
 	}
 	
-	public static String login(String userName, String password){
+	public static long login(Context context, String userName, String password){
 		try {
 			userName = 	URLEncoder.encode(userName, "UTF-8");
 			password = URLEncoder.encode(password, "UTF-8");
@@ -51,17 +52,50 @@ public class APIHandler {
 		}
 		
 		String loginStr = String.format("action=login&username=%s&password=%s", userName, password);
+		String responseStr = apiConnection(loginStr);
+		Log.d(LOG_TAG, "loginResponseStr: " + responseStr);
 		
-		return apiConnection(loginStr);
+		if(APIHandler.getResponseCode(responseStr) == 200){
+			
+			String accessToken = APIHandler.getStringFromJSON(responseStr, "access_token");
+			Log.d(LOG_TAG, "login access token: " + accessToken);
+			SQLHandler sqlHandler = SQLHandler.getInstance(context);
+			
+			if(sqlHandler.setUserAccessToken(userName, accessToken) == false){
+				
+				
+			}
+			
+		}
+		Log.d(LOG_TAG, "Login Error");
+		return -1L;
 	}
 	
-	public static String register(String userName, String email, String password, String retype){
-		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, email,password,retype);
+	public static long register(Context context, String userName, String password, String retype, boolean gender, int age, Bitmap userIcon ){
 		
+		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, userName, password, retype);
 		if(password.equals(retype))
-			return null;
+			return -1;
 		
-		return apiConnection(regStr);
+		String responseStr = apiConnection(regStr);
+		
+		int codeInt = APIHandler.getResponseCode(responseStr);
+		
+		if(codeInt == 200){
+			
+			String accessToken = APIHandler.getStringFromJSON(responseStr, "access_token");
+			
+			
+			SQLHandler sqlHandler = SQLHandler.getInstance(context);
+			
+			UserInfo userInfo = new UserInfo(userName, accessToken, 0, userIcon, age, userName, password, gender);
+			
+			long userId = sqlHandler.addUser(userInfo);
+			
+			return userId;
+		}
+		
+		return -1;
 		
 	}
 	
@@ -110,7 +144,8 @@ public class APIHandler {
     
     private static String getStringFromJSON(String responseStr, String jsonIndex){
         JSONParser parser = new JSONParser();
-        
+        if( responseStr == null || jsonIndex == null)
+        	return null;
         try {
 			Object authJSON = parser.parse(responseStr);
 	        JSONArray authArray = (JSONArray)authJSON;
@@ -127,7 +162,11 @@ public class APIHandler {
     
     private static int getResponseCode(String responseStr){
         String responseCodeStr = getStringFromJSON(responseStr, "code");
+        if(responseCodeStr == null) 
+        	return -1;
+        
         int responseCode;
+        
         try{
         responseCode = Integer.parseInt(responseCodeStr);
         }catch(NumberFormatException e){

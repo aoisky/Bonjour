@@ -76,7 +76,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 			+ USER_PASSWORD + TEXT_TYPE + "NOT NULL,"
 			+ USER_GENDER + INTEGER_TYPE + "NOT NULL,"
 			+ USER_AVATAR_PATH + TEXT_TYPE + ","
-			+ USER_ACCESS_TOKEN + TEXT_TYPE + ","
+			+ USER_ACCESS_TOKEN + TEXT_TYPE + "NOT NULL,"
 			+ USER_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 			+ " )";
 	
@@ -125,16 +125,8 @@ public class SQLHandler extends SQLiteOpenHelper{
 		values.put(USER_EMAIL, userInfo.getEmail());
 		values.put(USER_AGE, userInfo.getAge());
 		values.put(USER_PASSWORD, userInfo.getmd5Password());
-		
-		if(userInfo.getGender() == true){
-			values.put(USER_GENDER, 1);
-		} else{
-			values.put(USER_GENDER, 0);
-		}
-		
-	   // String dirName = Environment.getExternalStorageDirectory().toString();
-		
-	    //OutputStream os = null;
+		values.put(USER_ACCESS_TOKEN, userInfo.getUserAccessToken());
+		values.put(USER_GENDER, userInfo.getIntGender());
 		
 		long rowid = db.insert(USER_TABLE_NAME, null, values);
 		Log.d(LOG_TAG, "A user has been added to the database: " + userInfo.getUserName());
@@ -173,6 +165,32 @@ public class SQLHandler extends SQLiteOpenHelper{
         	return null;
         }
         return cursor.getString(0);
+		
+	}
+	
+	
+	public boolean setUserAccessToken(String userName, String userAccessToken){
+		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + " = " + userName;
+	    SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(getUserQuery, null);
+        int count = cursor.getCount();
+        //Check if it exists the user or return false
+        if(count == 0){
+        	return false;
+        }
+		
+        db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(USER_ACCESS_TOKEN, userAccessToken);
+		
+		long error = db.insert(USER_TABLE_NAME, null, values);
+        
+		//If insert failed
+		if(error == -1){
+			return false;
+		}
+		
+		return true;		
 		
 	}
 	
