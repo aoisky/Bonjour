@@ -273,4 +273,21 @@ class User{
 		$sql = "UPDATE users SET user_profile=\"" . $this->db->escapeStr($prof->toJsonStr()) . "\" WHERE user_name='" . $username . "' OR user_email='" . $username . "';";
 		$this->db->updateQuery($sql);
 	}
+	
+	public function getMatchings($json){
+		// $longitude = $json["mLongitude"];
+		// $latitude = $json["mLatitude"];
+		// $altitude = $json["mAltitude"];
+		// will include the requester herself
+		$sql = "SELECT user_id, user_email, user_profile, user_hobby FROM users " .
+				//
+				// ( 3959 * acos( cos( radians(43.493655) ) * cos( radians(" &  latitude & ") ) * cos( radians(" &  longitude & ") - radians(-1.474941) ) + sin( radians(43.493655) ) * sin( radians(" &  latitude & ") ) ) ) AS distance
+				// WHERE should include a distance check
+				// also add a LIMIT directive
+				";";
+		$query = $this->db->selectQuery($sql);
+		return $query;
+	}
+	
+	
 }

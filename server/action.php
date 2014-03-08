@@ -166,7 +166,7 @@ if ($action == "updateProfile") {
 
 } else if ($action == "match") {
 	try {
-		//"SELECT id, nom,ouverture, adresse, telephone, mail,( 3959 * acos( cos( radians(43.493655) ) * cos( radians(" &  latitude & ") ) * cos( radians(" &  longitude & ") - radians(-1.474941) ) + sin( radians(43.493655) ) * sin( radians(" &  latitude & ") ) ) ) AS distance FROM kindabreak HAVING distance < 150 ORDER BY distance LIMIT 0 , 20"
+		
 		$data = $app->getPOST("data");
 		$data = base64_decode($data);
 		
@@ -198,6 +198,16 @@ if ($action == "updateProfile") {
 			$app->returnJsonError($err_msg);
 		}
 	    
+		if ($json == NULL)
+			$app->jsonDump(array("code" => 400, "errno" => "601", "message" => "Cannot parse object."));
+		
+		if (!array_key_exists("desiredRange", $json) or !array_key_exists("mLatitude", $json) or !array_key_exists("mLongitude", $json))
+			$app->jsonDump(array("code" => 400, "errno" => "600", "message" => "Range or Longitude or Latitude not specified."));
+		
+		$match_list = $user->getMatchings($json);
+		
+		$app->jsonDump(array("code" => 200, "matchings" => $match_list));
+		
 		
 	} catch (Exception $e){
 	}
