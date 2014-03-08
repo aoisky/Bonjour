@@ -3,6 +3,7 @@ package edu.purdue.cs.hineighbor;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -120,6 +121,11 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		
 		if(userId != -1){
 			Toast.makeText(getActivity(), "Register successful", Toast.LENGTH_SHORT).show();
+			
+			Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
+			
+			homeIntent.putExtra(LoginActivity.USER_ID, userId);
+			startActivity(homeIntent);
 		}else{
 			Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
 		}
