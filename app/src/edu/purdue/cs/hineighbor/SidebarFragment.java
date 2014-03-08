@@ -55,7 +55,7 @@ public class SidebarFragment extends ListFragment {
         menuItems = new ArrayList<MenuItem>();
         
 		int width = display.getWidth();
-		view.setAlpha(0.95f);
+		view.setAlpha(0.70f);
 		view.getLayoutParams().width = (int)(width * 0.7);
 		view.setBackgroundColor(Color.parseColor("#E5E9EF"));
 	    return view;  
