@@ -61,7 +61,6 @@ public class LoginActivity extends Activity {
 		ColorDrawable background = new ColorDrawable(Color.parseColor("#00A9FF"));
 		background.setAlpha(150);
 		actionBar.setBackgroundDrawable(background);
-
 	}
 	
 	@Override

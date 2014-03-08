@@ -10,10 +10,16 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -61,9 +67,21 @@ public class APIHandler {
 			Log.d(LOG_TAG, "login access token: " + accessToken);
 			SQLHandler sqlHandler = SQLHandler.getInstance(context);
 			
+			//Decode the userName and password to insert the database
+			try {
+				userName = URLDecoder.decode(userName,"UTF-8");
+				password = URLDecoder.decode(password,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			if(sqlHandler.setUserAccessToken(userName, accessToken) == false){
+				Log.d(LOG_TAG, "Login: No exists user entry in the database");
 				
-				
+				//Create Default user profile
+				UserInfo userInfo = new UserInfo(context, userName, accessToken, password);
+				return sqlHandler.addUser(userInfo);
 			}
 			
 		}
@@ -146,11 +164,30 @@ public class APIHandler {
         JSONParser parser = new JSONParser();
         if( responseStr == null || jsonIndex == null)
         	return null;
+        
+        ContainerFactory containerFactory = new ContainerFactory(){
+            public List creatArrayContainer() {
+              return new LinkedList();
+            }
+
+            public Map createObjectContainer() {
+              return new LinkedHashMap();
+            }
+        };
+        
+        String jsonEntry = null;
+        
         try {
-			Object authJSON = parser.parse(responseStr);
-	        JSONArray authArray = (JSONArray)authJSON;
-	        JSONObject info = (JSONObject)authArray.get(0);
-	        return info.get(jsonIndex).toString();
+        	Map authJSON = (Map)parser.parse(responseStr, containerFactory);
+        	if(jsonIndex.equals("code")){
+        		long responseCode = (Long) authJSON.get(jsonIndex);
+        		jsonEntry = String.valueOf(responseCode);
+        	}else{
+        		jsonEntry = (String)authJSON.get(jsonIndex);
+        	}
+	        Log.d(LOG_TAG, "Get String From JSON: " + jsonEntry);
+	        
+	        return jsonEntry;
 	        
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -162,14 +199,17 @@ public class APIHandler {
     
     private static int getResponseCode(String responseStr){
         String responseCodeStr = getStringFromJSON(responseStr, "code");
-        if(responseCodeStr == null) 
+        if(responseCodeStr == null) {
+   	        Log.d(LOG_TAG, "Failed to get response code, responseCodeStr is null");
         	return -1;
+        }
         
         int responseCode;
         
         try{
-        responseCode = Integer.parseInt(responseCodeStr);
+        	responseCode = Integer.parseInt(responseCodeStr);
         }catch(NumberFormatException e){
+        	
         	responseCode = -1;
         }
         
