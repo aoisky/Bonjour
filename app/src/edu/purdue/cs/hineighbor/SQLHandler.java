@@ -72,7 +72,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 			+ USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ USER_NAME + TEXT_TYPE + " NOT NULL,"
 			+ USER_EMAIL + TEXT_TYPE + "NOT NULL,"
-			+ USER_AGE + INTEGER_TYPE + "NOT NULL,"
+			+ USER_AGE + INTEGER_TYPE  + "NOT NULL,"
 			+ USER_PASSWORD + TEXT_TYPE + "NOT NULL,"
 			+ USER_GENDER + INTEGER_TYPE + "NOT NULL,"
 			+ USER_AVATAR_PATH + TEXT_TYPE + ","
@@ -155,7 +155,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 	}
 	
 	public String getUserNameByUserId(int userId){
-		String getUserQuery = "SELECT " + USER_NAME + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = " + userId;
+		String getUserQuery = "SELECT " + USER_NAME + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = \"" + userId + "\"";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(getUserQuery, null);
 		
@@ -170,7 +170,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 	
 	
 	public boolean setUserAccessToken(String userName, String userAccessToken){
-		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + " = " + userName;
+		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE \"" + USER_NAME + "\" = \"" + userName + "\"";
 	    SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(getUserQuery, null);
         int count = cursor.getCount();

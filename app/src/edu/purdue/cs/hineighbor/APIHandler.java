@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -66,9 +67,21 @@ public class APIHandler {
 			Log.d(LOG_TAG, "login access token: " + accessToken);
 			SQLHandler sqlHandler = SQLHandler.getInstance(context);
 			
+			//Decode the userName and password to insert the database
+			try {
+				userName = URLDecoder.decode(userName,"UTF-8");
+				password = URLDecoder.decode(password,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			if(sqlHandler.setUserAccessToken(userName, accessToken) == false){
+				Log.d(LOG_TAG, "Login: No exists user entry in the database");
 				
-				
+				//Create Default user profile
+				UserInfo userInfo = new UserInfo(context, userName, accessToken, password);
+				return sqlHandler.addUser(userInfo);
 			}
 			
 		}

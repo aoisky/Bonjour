@@ -4,7 +4,10 @@ package edu.purdue.cs.hineighbor;
 
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 
 
 /**
@@ -33,6 +36,17 @@ public class UserInfo{
 		this.email = email;
 		this.md5Password = md5Password;
 		this.gender = gender;
+	}
+	
+	public UserInfo(Context context, String userName, String accessToken, String md5Password){
+		this.uid = 0;
+		this.userName = userName;
+		this.accessToken = accessToken;
+		this.userAvatar = BitmapFactory.decodeResource(context.getResources(), R.drawable.nouser);
+		this.age = 0;
+		this.email = userName;
+		this.md5Password = md5Password;
+		this.gender = true;
 	}
 	
 	public int getuid(){
