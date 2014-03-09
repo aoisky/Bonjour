@@ -12,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,12 +29,29 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * Bonjour API Handler
+ * @author Yudong Yang
+ *
+ */
 public class APIHandler {
 	
-	public static final String LOG_TAG = "APIHandlder";
+	public static final String LOG_TAG = "APIHandler";
 	public static final String AUTH_SERVER = "http://mc18.cs.purdue.edu:8088/cs240/demo/action.php";
+	
+	//Some string constants for bundle keys
+	public static final String USER_ID = "userId";
+	public static final String USERNAME = "username";
+	public static final String GENDER = "gender";
+	public static final String ACCESS_TOKEN = "access_token";
+	public static final String PROCEED_TOKEN = "proceed_token";
+	public static final String BIRTHDAY = "birthday";
+	public static final String DESIRED_RANGE = "desiredRange";
+	public static final String PHONE = "phone";
+	public static final String DATA = "data";
 	
 	/**
 	 * Utility function
@@ -48,6 +67,13 @@ public class APIHandler {
 		return false;
 	}
 	
+	/**
+	 * Log into a user account
+	 * @param context
+	 * @param userName
+	 * @param password
+	 * @return userId in the database
+	 */
 	public static long login(Context context, String userName, String password){
 		try {
 			userName = 	URLEncoder.encode(userName, "UTF-8");
@@ -88,13 +114,26 @@ public class APIHandler {
 		Log.d(LOG_TAG, "Login Error");
 		return -1L;
 	}
-	
+	/**
+	 * Register a user
+	 * @param context
+	 * @param userName
+	 * @param password
+	 * @param retype
+	 * @param gender
+	 * @param age
+	 * @param userIcon
+	 * @return userId in the database
+	 */
 	public static long register(Context context, String userName, String password, String retype, boolean gender, int age, Bitmap userIcon ){
+		Log.d(LOG_TAG, "Start register");
 		
-		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, userName, password, retype);
-		if(password.equals(retype))
-			return -1;
+		String email = userName;
 		
+		userName = userName.substring(0,userName.indexOf("@"));
+		
+		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, email, password, password);
+
 		String responseStr = apiConnection(regStr);
 		
 		int codeInt = APIHandler.getResponseCode(responseStr);
@@ -117,6 +156,12 @@ public class APIHandler {
 		
 	}
 	
+	/**
+	 * Logout the user
+	 * @param context
+	 * @param userId
+	 * @return logout result
+	 */
 	public static boolean logout(Context context, int userId){
 		String accessToken = getUserAccessToken(context, userId);
 		String userName = getUserName(context, userId);
@@ -135,6 +180,15 @@ public class APIHandler {
 
 	}
 	
+	/**
+	 * Change user's password
+	 * @param context
+	 * @param userId
+	 * @param oldPassword
+	 * @param newPassword
+	 * @param retype
+	 * @return change password result
+	 */
 	public static boolean changePassword(Context context, int userId, String oldPassword, String newPassword, String retype){
 		String accessToken = getUserAccessToken(context, userId);
 		String userName = getUserName(context, userId);
@@ -142,7 +196,7 @@ public class APIHandler {
 		String changePasswordStr = String.format("username=%s&access_token=%s&oldpassword=%s&newpassword=%s&retype=%s&action=change_password", userName, accessToken, oldPassword, newPassword, retype);
 		String responseStr = apiConnection(changePasswordStr);
 		
-		if(apiConnection(changePasswordStr) != null){
+		if(responseStr != null){
 			if(getResponseCode(responseStr) == 200)
 				return true;
 			else
@@ -153,13 +207,201 @@ public class APIHandler {
 
 	}
 	
-    private static String getUserName(Context context, int userId){
+	/**
+	 * Get user name by userId
+	 * @param context
+	 * @param userId
+	 * @return user name
+	 */
+    public static String getUserName(Context context, int userId){
 		SQLHandler sql = SQLHandler.getInstance(context);
 		String userName = sql.getUserNameByUserId(userId);
 		return userName;
     }
     
+    //Not FINISHED!!!
+    public static Bundle getUserProfile(String userName){
+    	Log.d(LOG_TAG, "Start getting user profile");
+    	if(userName == null){
+    		Log.d(LOG_TAG, "getUserProfile: username is null");
+    		return null;
+    	}
+    	
+    	String format = "action=getProfile&targetUser=%s";
+    	
+		String responseStr = apiConnection(String.format(format, userName));
+		
+		if(responseStr != null){
+			if(getResponseCode(responseStr) == 200)
+				
+				
+				return null;
+			else
+				return null;
+		}else{
+			return null;
+		}
+    	
+    }
     
+    /**
+     * Update user profile
+     * @param context
+     * @param bundle
+     * @return update result
+     */
+    public static boolean updateUserProfile(Context context, Bundle bundle){
+    	Log.d(LOG_TAG, "Start updating user profile");
+    	long userId = 0L;
+    	String userName;
+    	String accessToken;
+    	String gender;
+    	String birthday;
+    	String desiredRange;
+    	String phone;
+    	StringBuffer strBuf = new StringBuffer();
+    	String format = "action=updateProfile&username=%s&access_token=%s";
+    	String requestFormat = "&%s=%s";
+    	
+    	if(context != null && bundle != null){
+    		if( ( (userName = bundle.getString(USERNAME)) == null && (userId = bundle.getLong(USER_ID)) == 0L) || (accessToken = bundle.getString(ACCESS_TOKEN) )== null ){
+    			return false;
+    		}else{
+    			//Construct request string
+    			if(userName == null){
+    				userName = getUserName(context, (int)userId);
+    			}
+    			
+    			strBuf.append(String.format(format, userName, accessToken));
+    			
+    			if((gender = bundle.getString(GENDER)) != null){
+    				strBuf.append(String.format(requestFormat, GENDER, gender));
+    			}
+    			
+    			if((birthday = bundle.getString(BIRTHDAY)) != null){
+    				strBuf.append(String.format(requestFormat, BIRTHDAY, birthday));
+    			}
+    			
+    			if((desiredRange = bundle.getString(DESIRED_RANGE)) != null){
+    				strBuf.append(String.format(requestFormat, DESIRED_RANGE, desiredRange));
+    			}
+    			
+    			if((phone = bundle.getString(PHONE)) != null){
+    				strBuf.append(String.format(requestFormat, PHONE, phone));
+    			}
+    			
+    			String responseStr = apiConnection(strBuf.toString());
+    			
+    			if(responseStr != null){
+    				if(getResponseCode(responseStr) == 200){
+    					Log.d(LOG_TAG, "Profile updated successful");
+    					return true;
+    				}else{
+    					Log.d(LOG_TAG, "Profile updated failed");
+    					return false;
+    				}
+    			}else{
+    				Log.d(LOG_TAG, "Profile updated failed");
+    				return false;
+    			}
+    			
+    		}
+    			
+    	}
+    	Log.d(LOG_TAG, "Profile updated failed");
+    	return false;
+    }
+    
+    /**
+     * Get user security answer
+     * @param userName
+     * @return user security answer
+     */
+    public static String getSecurityQuestion(String userName){
+    	String format = "action=forgotPassword&username=%s";
+    	
+    	String responseStr = apiConnection(String.format(format, userName));
+    	
+    	if(responseStr != null){
+			if(getResponseCode(responseStr) == 200)
+				return getStringFromJSON(responseStr, DATA);
+			else
+				return null;
+		}else{
+			return null;
+		}
+    	
+    }
+    
+/**
+ * Verify the security answer
+ * @param userName
+ * @param answer
+ * @return access_token and proceed_token bundle, if error returns null
+ */
+    public static Bundle verifySecurityAnswer(String userName, String answer){
+    	
+    	String format = "action=verifySecurityAnswer&username=%s&answer=%s";
+    	
+    	String responseStr = apiConnection(String.format(format, userName, getMD5(answer)));
+		
+		if(responseStr != null){
+			if(getResponseCode(responseStr) == 200){
+				Bundle bundle = new Bundle();
+				bundle.putString(ACCESS_TOKEN, getStringFromJSON(responseStr, ACCESS_TOKEN));
+				bundle.putString(PROCEED_TOKEN, getStringFromJSON(responseStr, PROCEED_TOKEN));
+				return bundle;
+		}else
+				return null;
+		}else{
+			return null;
+		}
+    	
+    }
+    
+    
+    /**
+     * Utility function to convert a string to md5 string
+     * @param str
+     * @return md5 string
+     */
+    private static String getMD5(String str){
+    	
+    	try {
+    		byte[] byteStr;
+			byteStr = str.getBytes("UTF-8");
+			
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			byte[] encodedByteStr = md5.digest(byteStr);
+			
+			StringBuilder sb = new StringBuilder(2 * encodedByteStr.length);
+			
+			//Change byte array to string
+			for(byte b : encodedByteStr){
+				sb.append(String.format("%02x", b&0xff));
+				}
+			
+			return sb.toString();
+
+		
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    	
+    }
+    
+    /**
+     * Get String from JSON
+     * @param responseStr
+     * @param jsonIndex
+     * @return
+     */
     private static String getStringFromJSON(String responseStr, String jsonIndex){
         JSONParser parser = new JSONParser();
         if( responseStr == null || jsonIndex == null)
@@ -197,6 +439,11 @@ public class APIHandler {
         return null;
     }
     
+    /**
+     * Get response code from JSON string
+     * @param responseStr
+     * @return response code
+     */
     private static int getResponseCode(String responseStr){
         String responseCodeStr = getStringFromJSON(responseStr, "code");
         if(responseCodeStr == null) {
@@ -215,7 +462,13 @@ public class APIHandler {
         
         return responseCode;
     }
-	
+    
+	/**
+	 * Get user access token
+	 * @param context
+	 * @param userId
+	 * @return userAccessToken
+	 */
 	private static String getUserAccessToken(Context context, int userId){
 		SQLHandler sql = SQLHandler.getInstance(context);
 		String accessToken = sql.getUserAccessToken(userId);
@@ -229,9 +482,10 @@ public class APIHandler {
 	 * @return JSON String
 	 */
 	private static String apiConnection(String requestStr){
+		Log.d(LOG_TAG, "Start API connection");
 		URL url;
 		try {
-			Log.d(LOG_TAG, "Start API connection");
+			
 			url = new URL(AUTH_SERVER);
 		
 			HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
