@@ -2,10 +2,12 @@ package edu.purdue.cs.hineighbor;
 
 
 
+import edu.purdue.cs.hineighbor.LoginActivity.UserLoginTask;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -29,6 +31,15 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 	private RadioGroup genderRadio;
 	
 	private Button registerBtn;
+	
+	private UserRegisterTask mAuthTask = null;
+	String email;
+	String password;
+	String confirmPassword;
+	boolean gender;
+	int age;
+	Bitmap userIconBitmap;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -51,9 +62,9 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 	    SignupUploadFragment uploadFragment = (SignupUploadFragment)viewPager.getAdapter().instantiateItem(viewPager, 1);
 		
 		
-			String email = basicFragment.getEmail();
-			String password = basicFragment.getPassword();
-			String confirmPassword = basicFragment.getConfirmPassword();
+			email = basicFragment.getEmail();
+			password = basicFragment.getPassword();
+			confirmPassword = basicFragment.getConfirmPassword();
 			
 			if(email != null && !email.contains("@")){
 				viewPager.setCurrentItem(0);
@@ -88,7 +99,7 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		
 		ImageView userIcon = (ImageView) uploadFragment.getView().findViewById(R.id.signup_userIcon);
 		
-		Bitmap userIconBitmap = ((BitmapDrawable)userIcon.getDrawable()).getBitmap();
+		userIconBitmap = ((BitmapDrawable)userIcon.getDrawable()).getBitmap();
 
 		if(nickNameEdit.getText().toString().equals("")){
 			nickNameEdit.setError("Invalid nickname");
@@ -109,29 +120,54 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		}
 		
 		int genderId = genderRadio.getCheckedRadioButtonId();
-		boolean gender = false; // False: male True: female
+		gender = false; // False: male True: female
 
 		if(genderId == R.id.radioButtonFemale){
 			gender = true;
 		}
 		
-		int age = Integer.parseInt(ageEdit.getText().toString());
+		age = Integer.parseInt(ageEdit.getText().toString());
 		
-		long userId = APIHandler.register(this.getActivity(), email, password, confirmPassword, gender, age, userIconBitmap);
+		mAuthTask = new UserRegisterTask();
+		mAuthTask.execute((Void) null);
 		
-		if(userId != -1){
-			Toast.makeText(getActivity(), "Register successful", Toast.LENGTH_SHORT).show();
-			
-			Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
-			
-			homeIntent.putExtra(LoginActivity.USER_ID, userId);
-			startActivity(homeIntent);
-		}else{
-			Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+	}
+	
+	/**
+	 * Represents an asynchronous login/registration task used to authenticate
+	 * the user.
+	 */
+	public class UserRegisterTask extends AsyncTask<Void, Void, Long> {
+		@Override
+		protected Long doInBackground(Void... params) {
+			// TODO: attempt authentication against a network service.
+
+			Long userId = APIHandler.register(SignupDetailsFragment.this.getActivity(), SignupDetailsFragment.this.email, password, confirmPassword, gender, age, userIconBitmap);
+			return userId;
 		}
-		
-		getActivity().finish();
-		
-		
+
+		@Override
+		protected void onPostExecute(final Long success) {
+			mAuthTask = null;
+
+
+			if (success != -1) {
+				Intent homeIntent = new Intent(SignupDetailsFragment.this.getActivity(), HomeActivity.class);
+				
+				homeIntent.putExtra(LoginActivity.USER_ID, success);
+				startActivity(homeIntent);
+				SignupDetailsFragment.this.getActivity().finish();
+			} else{
+				Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+				SignupDetailsFragment.this.getActivity().finish();
+			}
+		}
+
+		@Override
+		protected void onCancelled() {
+			mAuthTask = null;
+			Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+			SignupDetailsFragment.this.getActivity().finish();
+		}
 	}
 }

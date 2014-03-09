@@ -18,12 +18,12 @@
  
 
     <TextView
-        android:id="@+id/birthday"
+        android:id="@+id/age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/nameOfUser"
         android:layout_centerHorizontal="true"
-        android:text="Birthday"
+        android:text="Age"
         android:paddingTop="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -46,7 +46,7 @@
         android:paddingTop="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
     <TextView
-        android:id="@+id/hobbies"
+        android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gender"

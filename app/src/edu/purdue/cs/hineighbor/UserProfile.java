@@ -24,7 +24,7 @@ public class UserProfile extends Activity{
 		TextView name = (TextView) findViewById(R.id.nameOfUser);
 		TextView birthday = (TextView) findViewById(R.id.birthday);
 		TextView gender = (TextView) findViewById(R.id.gender);
-		TextView hobbies = (TextView) findViewById(R.id.hobbies);
+		TextView hobbies = (TextView) findViewById(R.id.age);
 		
 		String userName = sqlHandler.getUserNameByUserId((int)userId);
 		name.setText(userName);
