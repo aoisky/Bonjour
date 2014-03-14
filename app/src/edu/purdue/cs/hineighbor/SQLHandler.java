@@ -149,7 +149,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         if(cursor.isNull(0)){
         	return null;
         }
-        
+        Log.d(LOG_TAG, "Got user access token form database: " + cursor.getString(0));
         return cursor.getString(0);
 
 	}

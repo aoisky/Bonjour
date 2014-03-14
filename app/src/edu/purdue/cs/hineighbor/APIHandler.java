@@ -14,16 +14,15 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -52,6 +51,7 @@ public class APIHandler {
 	public static final String DESIRED_RANGE = "desiredRange";
 	public static final String PHONE = "phone";
 	public static final String DATA = "data";
+	public static final String MATCHINGS = "matchings";
 	
 	/**
 	 * Utility function
@@ -219,7 +219,24 @@ public class APIHandler {
 		return userName;
     }
     
-    //Not FINISHED!!!
+    /**
+     * Get access token by user id in the database
+     * @param context
+     * @param userId
+     * @return
+     */
+    public static String getAccessTokenByUserId(Context context, int userId){
+    	SQLHandler sql = SQLHandler.getInstance(context);
+    	String accessToken = sql.getUserAccessToken(userId);
+    	
+    	return accessToken;
+    }
+    
+    /**
+     * Get a user profile bundle by username 
+     * @param userName
+     * @return userProfile bundle
+     */
     public static Bundle getUserProfile(String userName){
     	Log.d(LOG_TAG, "Start getting user profile");
     	if(userName == null){
@@ -232,11 +249,18 @@ public class APIHandler {
 		String responseStr = apiConnection(String.format(format, userName));
 		
 		if(responseStr != null){
-			if(getResponseCode(responseStr) == 200)
+			if(getResponseCode(responseStr) == 200){
+				Bundle bundle = new Bundle();
+				HashMap<String, String> hashMap = getHashMapFromJSON(responseStr, DATA);
 				
+				for(String key : hashMap.keySet()){
+					String value = hashMap.get(key);
+					Log.d(LOG_TAG, "Profile{ " + key +" }:" + value);
+					bundle.putString(key, value);
+				}
+				return bundle;
 				
-				return null;
-			else
+			} else
 				return null;
 		}else{
 			return null;
@@ -313,11 +337,37 @@ public class APIHandler {
     }
     
     /**
+     * Get security questions
+     * @return security questions hashMap
+     */
+    public static HashMap<String,String> getSecurityQuestions(){
+    	String format = "action=getSecurityQuestions";
+    	
+    	String responseStr = apiConnection(format);
+    	
+    	if(responseStr != null){
+			if(getResponseCode(responseStr) == 200){
+				HashMap<String, String> hashMap = getHashMapFromJSON(responseStr, DATA);
+				
+				for(String key : hashMap.keySet()){
+					Log.d(LOG_TAG, "Security Question{ " + key +" }:" + hashMap.get(key));
+				}
+				
+				return hashMap;
+			}else
+				return null;
+		}else{
+			return null;
+		}
+    	
+    }
+    
+    /**
      * Get user security answer
      * @param userName
      * @return user security answer
      */
-    public static String getSecurityQuestion(String userName){
+    public static String getUserSecurityQuestion(String userName){
     	String format = "action=forgotPassword&username=%s";
     	
     	String responseStr = apiConnection(String.format(format, userName));
@@ -332,6 +382,7 @@ public class APIHandler {
 		}
     	
     }
+    
     
 /**
  * Verify the security answer
@@ -359,6 +410,133 @@ public class APIHandler {
     	
     }
     
+    /**
+     * Generate new password
+     * @param userName
+     * @param proceedToken
+     * @return success or fail
+     */
+    public static boolean generateNewPassword(String userName, String proceedToken){
+    	String format = "action=genNewPassword&proceed_token=%s&username=%s";
+    	
+    	String responseStr = apiConnection(String.format(format, proceedToken, userName ));
+		
+		if(responseStr != null){
+			if(getResponseCode(responseStr) == 200){
+				return true;
+		}else
+				return false;
+		}else{
+			return false;
+		}
+    }
+    
+    /**
+     * Change forgotten password
+     * @param userName
+     * @param proceedToken
+     * @param newPassword
+     * @return success or fail
+     */
+    public static boolean changeForgottenPassword(String userName, String proceedToken, String newPassword){
+    	String format = "action=changeForgottenPassword&proceed_token=%s&username=%s&newpassword=%s&retype=%s";
+    	
+    	String responseStr = apiConnection(String.format(format, proceedToken, userName, newPassword, newPassword ));
+		
+		if(responseStr != null){
+			if(getResponseCode(responseStr) == 200){
+				return true;
+		}else
+				return false;
+		}else{
+			return false;
+		}
+    }
+    
+    /**
+     * Update location and obtain bundle list that contains user information
+     * @param desiredDistance
+     * @param mProvider
+     * @param mLatitude
+     * @param mLongitude
+     * @param mAltitude
+     * @return
+     */
+    public static ArrayList<Bundle> updateLocationMatching(Context context, long userId, String desiredDistance,String mProvider, String mLatitude, String mLongitude, String mAltitude){
+    	Log.d(LOG_TAG, "Start updating location and matching users");
+    	String format = "action=match&username=%s&access_token=%s&data=%s";
+    	
+    	//Get user login information
+    	String userName = getUserName(context, (int)userId);
+    	String accessToken = getAccessTokenByUserId(context,(int) userId);
+    	
+    	JSONObject object = new JSONObject();
+
+    		try {
+    	    	if(desiredDistance != null){
+    	    		object.put("desiredRange", desiredDistance);
+    	    	}else{
+    	    		object.put("desiredRange", "");
+    	    	}
+    	    	
+    	    	if(mProvider != null){
+    	    		object.put("mProvider", mProvider);
+    	    	}else{
+    	    		object.put("mProvider", "");
+    	    	}
+    	    	
+    	    	if(mLatitude != null){
+    	    		object.put("mLatitude", mLatitude);
+    	    	}else{
+    	    		object.put("mLatitude", "");
+    	    	}
+    	    	
+    	    	if(mLongitude != null){
+    	    		object.put("mLongitude", mLongitude);
+    	    	}else{
+    	    		object.put("mLongitude", "");
+    	    	}
+    	    	
+    	    	if(mAltitude != null){
+    	    		object.put("mAltitude", mAltitude);
+    	    	}else{
+    	    		object.put("mAltitude", "");
+    	    	}
+    	    	
+    	    	String locationJSON = object.toString();
+    	    	String base64LocationString = getBase64String(locationJSON);
+    	    	
+    	    	String responseStr = apiConnection(String.format(format, userName, accessToken, base64LocationString));
+    	    	
+    	    	if(responseStr != null){
+    				if(getResponseCode(responseStr) == 200){
+    					return getBundleListFromJSON(responseStr, MATCHINGS);
+    					
+    				} else
+    					return null;
+    			}else{
+    				return null;
+    			}
+    	    	
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+    	
+    	
+    }
+    
+    /**
+     * Utility function to convert a string to base64
+     * @param str
+     * @return
+     */
+    private static String getBase64String(String str){
+    	byte[] strBytes = str.getBytes();
+    	
+    	return Base64.encodeBytes(strBytes);
+    }
     
     /**
      * Utility function to convert a string to md5 string
@@ -397,46 +575,109 @@ public class APIHandler {
     }
     
     /**
+     * Get a bundle list that contains matching information
+     * @param responseStr
+     * @param jsonIndex
+     * @return bundleList
+     */
+    private static ArrayList<Bundle> getBundleListFromJSON(String responseStr, String jsonIndex){
+    	JSONTokener tokener = new JSONTokener(responseStr);
+    	ArrayList<Bundle> bundleList = new ArrayList<Bundle>();
+    	
+    	JSONObject object;
+		try {
+			object = (JSONObject) tokener.nextValue();
+    		JSONArray arrayObject = (JSONArray) object.get(jsonIndex);
+    		
+    		int arrayLength = arrayObject.length();
+    		for(int i = 0; i < arrayLength; i++){
+    			JSONObject jsonObject = arrayObject.getJSONObject(i);
+    			
+    			int objectLength = jsonObject.length();
+				JSONArray keyArray = jsonObject.names();
+				Log.d(LOG_TAG,"getBundleListFromJSON: New bundle created");
+    			for(int j = 0; j < objectLength; j++){
+
+    				Bundle bundle = new Bundle();
+
+    	    		String jsonName = keyArray.getString(j);
+    	    		String value = jsonObject.getString(jsonName);
+    	    		Log.d(LOG_TAG, "Put value into bundle{ " + jsonName + "}: " + value);
+    	    		bundle.putString(jsonName, value);
+    	    		bundleList.add(bundle);
+    				
+    			}
+
+    		}
+    		
+    		return bundleList;
+    		
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+    	
+    	
+    }
+    
+    /**
+     * Return a HashMap that contains information of the JSON index
+     * @param responseStr
+     * @param jsonIndex
+     * @return jsondataHashMap
+     */
+    private static HashMap<String, String> getHashMapFromJSON(String responseStr, String jsonIndex){
+    	JSONTokener tokener = new JSONTokener(responseStr);
+    	HashMap<String, String> hashMap = new HashMap<String, String>();
+    	
+    	JSONObject object;
+			try {
+				object = (JSONObject) tokener.nextValue();
+	    		JSONObject mapObject = (JSONObject) object.get(jsonIndex);
+	    		
+	    		JSONArray nameArray = mapObject.names();
+	    		
+	    		int length = nameArray.length();
+	    		for(int i = 0; i < length; i++){
+	    			String jsonName = nameArray.getString(i);
+	    			String value = mapObject.getString(jsonName);
+	    			hashMap.put(jsonName, value);
+	    		}
+	    		
+	    		return hashMap;
+	    		
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+    	
+    }
+    
+    /**
      * Get String from JSON
      * @param responseStr
      * @param jsonIndex
      * @return
      */
     private static String getStringFromJSON(String responseStr, String jsonIndex){
-        JSONParser parser = new JSONParser();
-        if( responseStr == null || jsonIndex == null)
-        	return null;
+    	JSONTokener tokener = new JSONTokener(responseStr);
         
-        ContainerFactory containerFactory = new ContainerFactory(){
-            public List creatArrayContainer() {
-              return new LinkedList();
-            }
-
-            public Map createObjectContainer() {
-              return new LinkedHashMap();
-            }
-        };
-        
-        String jsonEntry = null;
-        
-        try {
-        	Map authJSON = (Map)parser.parse(responseStr, containerFactory);
-        	if(jsonIndex.equals("code")){
-        		long responseCode = (Long) authJSON.get(jsonIndex);
-        		jsonEntry = String.valueOf(responseCode);
-        	}else{
-        		jsonEntry = (String)authJSON.get(jsonIndex);
-        	}
-	        Log.d(LOG_TAG, "Get String From JSON: " + jsonEntry);
-	        
-	        return jsonEntry;
-	        
-		} catch (ParseException e) {
+    	try {
+			JSONObject object = (JSONObject) tokener.nextValue();
+			String str = object.getString(jsonIndex);
+			return str;
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
+			Log.d(LOG_TAG, "JSON parse expcetion");
 			e.printStackTrace();
 		}
-        
-        return null;
+    	
+    	return null;
+    	
     }
     
     /**
