@@ -137,6 +137,10 @@ public class HomeActivity extends Activity {
 	    		finish();
 	    		return true;
 	    		
+	    	case R.id.action_settings:
+	    		Intent settings = new Intent(this, SettingsActivity.class);
+	    		startActivity(settings);
+	            return true;
 	            
 	        default:
 	            return super.onOptionsItemSelected(item);

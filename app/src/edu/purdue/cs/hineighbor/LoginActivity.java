@@ -237,13 +237,13 @@ public class LoginActivity extends Activity {
 			// TODO: attempt authentication against a network service.
 
 			try {
-
-				Long userId = APIHandler.login(LoginActivity.this, mEmail, mPassword);  //Login Test
-				// Simulate network access.
-				//APIHandler.getSecurityQuestions();
-				//APIHandler.updateLocationMatching(LoginActivity.this, userId, "10", "", "15", "20", "25");
-				Thread.sleep(2000);
-				return userId;
+				if(APIHandler.isNetworkAvaliable(LoginActivity.this)){
+					Long userId = APIHandler.login(LoginActivity.this, mEmail, mPassword);  //Login Test
+					
+					Thread.sleep(2000);
+					return userId;
+				}
+				return -1L;
 			} catch (InterruptedException e) {
 				return -1L;
 			}

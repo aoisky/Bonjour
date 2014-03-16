@@ -20,6 +20,9 @@
     <string name="title_activity_help">HelpActivity</string>
 	<string name="drawer_open">drawer_open</string>
 	<string name="drawer_close">drawer_close</string>
+	<string name="gender">Gender</string>
+	<string name="user_avatar">User Avatar</string>
+	<string name="user_name">Username</string>
 	
     <string-array name="home_list_title" >
         <item>Home</item>
