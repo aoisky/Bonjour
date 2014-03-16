@@ -1,9 +1,7 @@
 package edu.purdue.cs.hineighbor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+
 import edu.purdue.cs.hineighbor.SQLHandler;
 import android.os.Bundle;
 import android.app.ActionBar;
@@ -11,91 +9,83 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+
 
 public class HomeActivity extends Activity {
 
-	private long userId = 0;
+	//Save a userId
+	private long userId = 0L;
 	
-	private boolean sidebarFlag = false;
-	private SidebarFragment sidebar;
 	
+	//private boolean sidebarFlag = false;
+	//private SidebarFragment sidebar;
+	
+	private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private String[] titles;
+    private ListView drawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private CharSequence activityTitle;
+    
 	SQLHandler sqlhandler = SQLHandler.getInstance(this);
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.activity_home_navigation);
 		userId = getIntent().getExtras().getLong(LoginActivity.USER_ID);
 		//Set action bar
 		setActionBar(this.getActionBar());
+		activityTitle = this.getTitle();
 		
-		ListView listView = (ListView) findViewById(R.id.listView_home); 
-		//SimpleAdapter adapter = new SimpleAdapter(this, getData(), R.layout.activity_home_list_layout, new String[]{"Name","info","img"}, new int[] {R.id.list_username,R.id.list_detail_hobbies,R.id.list_avatar_image});
-		//listView.setAdapter(adapter);
+		titles = getResources().getStringArray(R.array.home_list_title);
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		drawerList = (ListView) findViewById(R.id.left_drawer);
+		
+		 mDrawerToggle = new ActionBarDrawerToggle(
+	                this,                  
+	                drawerLayout,         
+	                R.drawable.ic_action_help, 
+	                R.string.drawer_open,  
+	                R.string.drawer_close 
+	                ) {
+
+	            /** Called when a drawer has settled in a completely closed state. */
+	            public void onDrawerClosed(View view) {
+	                super.onDrawerClosed(view);
+	                getActionBar().setTitle(activityTitle);
+	            }
+
+	            /** Called when a drawer has settled in a completely open state. */
+	            public void onDrawerOpened(View drawerView) {
+	                super.onDrawerOpened(drawerView);
+	                getActionBar().setTitle(activityTitle);
+	            }
+	        };
+	        
+		
+		//Change to custom adapter If possible
+		ArrayAdapter<String> drawerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
+		drawerList.setAdapter(drawerAdapter);		
+		
+		drawerLayout.setDrawerListener(drawerToggle);
+		
 	}
 
-	private List<Map<String, Object>> getData() {
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		
-	/*	map.put("Name", "user1");
-		map.put("info", "hobbies 1");
-		map.put("img", R.drawable.bonjour_icon);
-		list.add(map);
-
-		map = new HashMap<String, Object>();
-		map.put("Name", "uesr2");
-		map.put("info", "hobbies 2");
-		map.put("img", R.drawable.bonjour_icon);
-		list.add(map);
-
-		map = new HashMap<String, Object>();
-		map.put("Name", "user3");
-		map.put("info", "hobbies 3");
-		map.put("img", R.drawable.bonjour_icon);
-		list.add(map);*/
-		
-		
-		
-		return list;
-	}
-	
 	/**
-	 * Set a side bar in the main activity by fragment
+	 * Set action bar
+	 * @param actionBar
 	 */
-	private void setSideBar(){
-		FragmentManager fragmentMgr = this.getFragmentManager();
-		FragmentTransaction transaction = fragmentMgr.beginTransaction();
-		
-		if(sidebarFlag == true){
-			fragmentMgr.popBackStack();
-			sidebarFlag = false;
-			return;
-		}
-		
-		sidebar = new SidebarFragment();
-
-		Bundle bundle = new Bundle();
-		bundle.putLong(LoginActivity.USER_ID, userId);
-		
-		sidebar.setArguments(bundle);
-		
-		transaction.replace(android.R.id.content, sidebar);
-		transaction.setCustomAnimations(R.anim.slide_enter, R.anim.slide_exit);
-		//transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		transaction.addToBackStack(null);
-		transaction.commit();
-		
-		sidebarFlag = true;
-		
-	}
-	
 	private void setActionBar(ActionBar actionBar){
 		actionBar.setTitle("Bonjour!");
 
@@ -116,12 +106,29 @@ public class HomeActivity extends Activity {
 		return true;
 	}
 	
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
+		 if (mDrawerToggle.onOptionsItemSelected(item)) {
+	          return true;
+	        }
+		
 	    switch (item.getItemId()) {
 	    	case android.R.id.home:
-	    		setSideBar();
+	    		//setSideBar();
 	    		return true;
 	    		
 	    	case R.id.action_logout:
@@ -136,4 +143,9 @@ public class HomeActivity extends Activity {
 	    }
 	}
 
+	
+
+		
+
+	
 }

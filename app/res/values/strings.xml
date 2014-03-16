@@ -18,5 +18,13 @@
     <string name="signup_detail_info">Detail Inforamtion</string>
     <string name="action_logout">Logout</string>
     <string name="title_activity_help">HelpActivity</string>
-
+	<string name="drawer_open">drawer_open</string>
+	<string name="drawer_close">drawer_close</string>
+	
+    <string-array name="home_list_title" >
+        <item>Home</item>
+        <item>Profile</item>
+        <item>Matchings</item>
+        <item>Logout</item>
+    </string-array>
 </resources>

@@ -2,7 +2,6 @@ package edu.purdue.cs.hineighbor;
 
 
 
-import edu.purdue.cs.hineighbor.LoginActivity.UserLoginTask;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;

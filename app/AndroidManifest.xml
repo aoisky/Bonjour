@@ -37,7 +37,7 @@
             android:parentActivityName="me.imvoice.app.LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.imvoice.app.LoginActivity" />
+                android:value="edu.purdue.cs.hineighbor.LoginActivity" />
         </activity>
         <activity
             android:name="edu.purdue.cs.hineighbor.HomeActivity"
@@ -52,6 +52,14 @@
         <activity
             android:name="edu.purdue.cs.hineighbor.HelpActivity"
             android:label="@string/title_activity_help" >
+        </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="edu.purdue.cs.hineighbor.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.purdue.cs.hineighbor.HomeActivity" />
         </activity>
     </application>
 
