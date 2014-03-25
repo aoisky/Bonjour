@@ -25,6 +25,7 @@
             android:orientation="vertical"
                     >
         <TextView
+            android:id="@+id/profile_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user_name"
@@ -33,7 +34,7 @@
             android:layout_marginLeft="10dp"
              />
         <TextView
-            android:id="@+id/user_profile_gender"
+            android:id="@+id/profile_user_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/gender"
@@ -45,6 +46,7 @@
     </LinearLayout>
     
     <TextView 
+        android:id="@+id/profile_user_current"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Current User Profile"
@@ -53,7 +55,7 @@
         />
     
     <TextView
-        android:id="@+id/user_birthday"
+        android:id="@+id/profile_user_birthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Birthday"
@@ -62,7 +64,7 @@
         />
     
     <TextView
-        android:id="@+id/user_age"
+        android:id="@+id/profile_user_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Age"
@@ -71,7 +73,7 @@
         />
     
     <TextView
-        android:id="@+id/user_desired_range"
+        android:id="@+id/profile_user_desired_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Desired Range"
@@ -80,7 +82,7 @@
         />
     
         <TextView
-        android:id="@+id/user_phone_num"
+        android:id="@+id/profile_user_phone_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Phone number"
@@ -89,7 +91,7 @@
         />
         
         <Button 
-            android:id="@+id/user_edit_profile_btn"
+            android:id="@+id/profile_user_edit_profile_btn"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:text="Edit Profile"

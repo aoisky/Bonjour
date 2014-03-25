@@ -6,6 +6,7 @@ import edu.purdue.cs.hineighbor.SQLHandler;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -51,6 +53,7 @@ public class HomeActivity extends Activity {
 		titles = getResources().getStringArray(R.array.home_list_title);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawerList = (ListView) findViewById(R.id.left_drawer);
+		drawerList.setOnItemClickListener(new DrawerItemClickListener());
 		
 		 mDrawerToggle = new ActionBarDrawerToggle(
 	                this,                  
@@ -148,8 +151,40 @@ public class HomeActivity extends Activity {
 	}
 
 	
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+	    @Override
+	    public void onItemClick(AdapterView parent, View view, int position, long id) {
+	        selectItem(position);
+	    }
 
+
+	}
+
+	/** Swaps fragments in the main content view */
+	private void selectItem(int position) {
+	    // Create a new fragment
+		Fragment fragment = null;
+		switch(position){
+		case 1: 
+		    fragment = new UserProfileFragment();
+		break;
+
+		}
 		
+	    Bundle args = new Bundle();
+	    args.putLong(APIHandler.USER_ID, userId);
+	    fragment.setArguments(args);
+	    // Insert the fragment by replacing any existing fragment
+	    FragmentManager fragmentManager = getFragmentManager();
+	    fragmentManager.beginTransaction()
+	                   .replace(R.id.content_frame, fragment)
+	                   .commit();
+
+	    // Highlight the selected item and close the drawer
+	    drawerList.setItemChecked(position, true);
+	    drawerLayout.closeDrawer(drawerList);
+	}
+
 
 	
 }

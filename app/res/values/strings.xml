@@ -28,6 +28,7 @@
         <item>Home</item>
         <item>Profile</item>
         <item>Matchings</item>
+        <item>About</item>
         <item>Logout</item>
     </string-array>
 </resources>

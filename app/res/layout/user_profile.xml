@@ -9,12 +9,12 @@
     >
 
    
-        <ImageView
+   <ImageView
             android:id="@+id/profile_image"
             android:layout_width="140dip"
             android:layout_height="125dp"
             android:contentDescription="UserImage" 
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true" />
  
 
     <TextView
