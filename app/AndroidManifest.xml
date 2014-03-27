@@ -61,6 +61,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.purdue.cs.hineighbor.HomeActivity" />
         </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.FindPasswordActivity"
+            android:label="@string/title_activity_find_password" >
+        </activity>
     </application>
 
 </manifest>
