@@ -65,6 +65,14 @@
             android:name="edu.purdue.cs.hineighbor.FindPasswordActivity"
             android:label="@string/title_activity_find_password" >
         </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.FindPassFragment1Activity"
+            android:label="@string/title_activity_find_pass_fragment1" >
+        </activity>
+        <activity
+            android:name="edu.purdue.cs.hineighbor.FindPassFragment2Activity"
+            android:label="@string/title_activity_find_pass_fragment2" >
+        </activity>
     </application>
 
 </manifest>

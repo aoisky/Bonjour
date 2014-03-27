@@ -33,5 +33,7 @@
     </string-array>
 
     <string name="title_activity_find_password">FindPasswordActivity</string>
+    <string name="title_activity_find_pass_fragment1">FindPassFragment1Activity</string>
+    <string name="title_activity_find_pass_fragment2">FindPassFragment2Activity</string>
 
 </resources>

@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".FindPassFragment2Activity" >
+
+    <TextView
+        android:id="@+id/find_pass_security_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/find_pass_question"
+        android:layout_below="@+id/find_pass_question"
+        android:layout_marginTop="22dp"
+        android:text="(security question)" />
+
+    <TextView
+        android:id="@+id/find_pass_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Please Answer the Security Question:"
+        android:textSize="16dp" />
+
+    <EditText
+        android:id="@+id/find_pass_enter_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/find_pass_security_display"
+        android:layout_below="@+id/find_pass_security_display"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:inputType="textEmailAddress|textShortMessage" />
+
+    <Button
+        android:id="@+id/find_pass_confirm_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/find_pass_enter_answer"
+        android:background="@drawable/aritcle_btns"
+        android:text="Confirm"
+        android:textColor="@android:color/white"
+        android:textSize="14dp" />
+
+</RelativeLayout>
