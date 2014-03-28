@@ -24,13 +24,10 @@ class UserProfile {
 	}
 	
 	public function addField($f, $v){
-		$this->data = $this->data + array($f => $v);
+		$this->data[$f] = $v;
 	}
 	
 	public function updateField($f, $v){
-		if ($this->hasField($f)){
-			$this->removeField($f);
-		}
 		$this->addField($f, $v);
 	}
 	
