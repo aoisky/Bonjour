@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -127,6 +128,18 @@ public class LoginActivity extends Activity {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		 switch (item.getItemId()) {
+		 case R.id.action_forgot_password:
+			 Intent findPasswordIntent = new Intent(this, FindPasswordActivity.class);
+			 this.startActivity(findPasswordIntent);
+			 return true;
+		 }
+		 
+		 return false;
 	}
 
 	/**
