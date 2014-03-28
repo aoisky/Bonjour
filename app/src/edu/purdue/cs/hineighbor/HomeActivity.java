@@ -86,7 +86,7 @@ public class HomeActivity extends Activity {
 		drawerList.setAdapter(drawerAdapter);		
 		
 		drawerLayout.setDrawerListener(drawerToggle);
-		
+		this.showWelcome();
 	}
 
 	/**
@@ -210,6 +210,18 @@ public class HomeActivity extends Activity {
 		
 		}
 
+	}
+	
+	private void showWelcome(){
+		Fragment fragment = new HomeWelcomeFragment();
+	    Bundle args = new Bundle();
+	    args.putLong(APIHandler.USER_ID, userId);
+	    fragment.setArguments(args);
+	    // Insert the fragment by replacing any existing fragment
+	    FragmentManager fragmentManager = getFragmentManager();
+	    fragmentManager.beginTransaction()
+	                   .replace(R.id.content_frame, fragment)
+	                   .commit();
 	}
 	
 	private void changeFragment(Fragment fragment, int position){
