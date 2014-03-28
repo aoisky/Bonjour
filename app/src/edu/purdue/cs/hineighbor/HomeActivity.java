@@ -165,12 +165,24 @@ public class HomeActivity extends Activity {
 	    // Create a new fragment
 		Fragment fragment = null;
 		switch(position){
+		//Home
+		case 0:
+			fragment = new HomeWelcomeFragment();
+		break;
+		//Profile
 		case 1: 
 		    fragment = new UserProfileFragment();
 		break;
-
-		}
+		//Matchings
+		case 2:
+		//About
+		break;
+		//Logout
+		case 3:
+			
+		break;
 		
+		}
 	    Bundle args = new Bundle();
 	    args.putLong(APIHandler.USER_ID, userId);
 	    fragment.setArguments(args);

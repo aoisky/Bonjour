@@ -25,7 +25,6 @@ public class UserProfileFragment extends Fragment {
 		
 		View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
 		
-
 		
 		userProfileAvatar = (ImageView) rootView.findViewById(R.id.profile_image);
 		genderText = (TextView) rootView.findViewById(R.id.profile_user_gender);
@@ -39,7 +38,7 @@ public class UserProfileFragment extends Fragment {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
-
+		super.onCreate(savedInstanceState);
 		
 		if(this.getArguments()!= null){
 			userId = this.getArguments().getLong(APIHandler.USER_ID);
