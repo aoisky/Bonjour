@@ -231,7 +231,7 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Long> {
+	private class UserLoginTask extends AsyncTask<Void, Void, Long> {
 		@Override
 		protected Long doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.

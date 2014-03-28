@@ -3,12 +3,15 @@ package edu.purdue.cs.hineighbor;
 
 
 import edu.purdue.cs.hineighbor.SQLHandler;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -21,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 public class HomeActivity extends Activity {
@@ -135,9 +139,7 @@ public class HomeActivity extends Activity {
 	    		return true;
 	    		
 	    	case R.id.action_logout:
-	    		Intent login = new Intent(this,LoginActivity.class);
-	    		startActivity(login);
-	    		finish();
+				this.logoutAccount();
 	    		return true;
 	    		
 	    	case R.id.action_settings:
@@ -168,21 +170,49 @@ public class HomeActivity extends Activity {
 		//Home
 		case 0:
 			fragment = new HomeWelcomeFragment();
+			changeFragment(fragment, position);
+			getActionBar().setTitle("Welcome");
 		break;
 		//Profile
 		case 1: 
 		    fragment = new UserProfileFragment();
+			changeFragment(fragment, position);
+			getActionBar().setTitle("User Profile");
 		break;
+		
 		//Matchings
 		case 2:
-		//About
+			fragment = new MatchingsFragment();
+			changeFragment(fragment, position);
+			getActionBar().setTitle("Matchings");
 		break;
-		//Logout
+		//Change password
 		case 3:
-			
+			fragment = new ChangePasswordFragment();
+			changeFragment(fragment,position);
+			getActionBar().setTitle("Change Password");
+		break;
+		
+		//About
+		case 4:
+		    drawerList.setItemChecked(position, true);
+		    drawerLayout.closeDrawer(drawerList);
+		    this.showAbout();
+		break;
+		
+		//Logout
+		case 5:
+		    drawerList.setItemChecked(position, true);
+		    drawerLayout.closeDrawer(drawerList);
+			Toast.makeText(this, "Now Logout...", Toast.LENGTH_SHORT).show();
+			this.logoutAccount();
 		break;
 		
 		}
+
+	}
+	
+	private void changeFragment(Fragment fragment, int position){
 	    Bundle args = new Bundle();
 	    args.putLong(APIHandler.USER_ID, userId);
 	    fragment.setArguments(args);
@@ -197,6 +227,53 @@ public class HomeActivity extends Activity {
 	    drawerLayout.closeDrawer(drawerList);
 	}
 
+	private void logoutAccount(){
+		new HomeActivityTask().execute(0);
+	}
+	
+	private void showAbout(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		  builder.setMessage("Bonjour Version 1.0 Beta\n")
+		  .setTitle("About Us")
+		  .setCancelable(false)
+		  .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) { }
+      });
 
+		  AlertDialog alert = builder.create();
+		  alert.show();
+	}
+	
+	private class HomeActivityTask extends AsyncTask<Integer, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			boolean logoutFlag = false;
+			
+			if(params[0] == 0){
+				if(APIHandler.isNetworkAvaliable(HomeActivity.this)){
+					logoutFlag = APIHandler.logout(HomeActivity.this, (int)HomeActivity.this.userId);
+				}
+			}
+			
+			return logoutFlag;
+		}
+		
+		@Override
+		protected void onPostExecute(final Boolean success) {
+			
+			if(success == true){
+				Toast.makeText(HomeActivity.this, "Logout successfully", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+				HomeActivity.this.startActivity(intent);
+				HomeActivity.this.finish();
+			} else {
+				Toast.makeText(HomeActivity.this, "Logout failed, please check network connection", Toast.LENGTH_SHORT).show();
+			}
+			
+		}
+		
+
+	}
 	
 }

@@ -166,7 +166,7 @@ public class APIHandler {
 		String accessToken = getUserAccessToken(context, userId);
 		String userName = getUserName(context, userId);
 		
-		String logoutStr = String.format("username=%s&access_token=%saction=logout", userName, accessToken);
+		String logoutStr = String.format("username=%s&access_token=%s&action=logout", userName, accessToken);
 		String responseStr = apiConnection(logoutStr);
 		
 		if(responseStr != null){
@@ -651,6 +651,9 @@ public class APIHandler {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}catch (Exception e){
+				e.printStackTrace();
+				Log.d(LOG_TAG, "JSON parse hashMap unknown error");
 			}
 			
 			return null;
@@ -674,6 +677,9 @@ public class APIHandler {
 			// TODO Auto-generated catch block
 			Log.d(LOG_TAG, "JSON parse expcetion");
 			e.printStackTrace();
+		}catch (Exception e){
+			e.printStackTrace();
+			Log.d(LOG_TAG, "JSON parse string unknown error");
 		}
     	
     	return null;

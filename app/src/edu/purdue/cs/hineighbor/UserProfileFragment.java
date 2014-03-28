@@ -37,8 +37,8 @@ public class UserProfileFragment extends Fragment {
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState){
+		super.onActivityCreated(savedInstanceState);
 		
 		if(this.getArguments()!= null){
 			userId = this.getArguments().getLong(APIHandler.USER_ID);
