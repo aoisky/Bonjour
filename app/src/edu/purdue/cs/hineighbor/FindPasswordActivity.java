@@ -1,5 +1,6 @@
 package edu.purdue.cs.hineighbor;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FindPasswordActivity extends Activity implements OnClickListener {
 
@@ -35,9 +37,12 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 		securityQuestionText = (TextView) answerQuestionView.findViewById(R.id.find_pass_security_display);
 		securityConfirmBtn = (Button) answerQuestionView.findViewById(R.id.find_pass_confirm_question);
 		securityConfirmBtn.setOnClickListener(this);
+		userNameConfirmBtn = (Button) getUserNameView.findViewById(R.id.find_pass_confirm_email_btn);
+		
+		userNameConfirmBtn.setOnClickListener(this);
+		retrieveLayout.addView(getUserNameView);
 		
 		
-		retrieveLayout.addView(answerQuestionView);
 	}
 
 	@Override
@@ -50,11 +55,14 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		
+		if(v == userNameConfirmBtn){
+			retrieveSecurityQuestion(emailAddressText.getText().toString());
+		}
 	}
 	
-	private String retrieveSecurityQuestion(String userName){
-		return null;
+	private void retrieveSecurityQuestion(String userName){
+		Toast.makeText(this, "Retrieving security question...", Toast.LENGTH_SHORT).show();
+		new RetrieveQuestionTask().execute(userName);
 	}
 	
 	private String checkSecurityQuestion(String answer){
@@ -62,4 +70,19 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 		return null;
 	}
 
+	private class RetrieveQuestionTask extends AsyncTask<String, Void, String>{
+
+		@Override
+		protected String doInBackground(String... params) {
+			String userName = params[0];
+			String securityQuestion = APIHandler.getUserSecurityQuestion(userName);
+			return securityQuestion;
+		}
+		
+		@Override
+		protected void onPostExecute(final String question) {
+			FindPasswordActivity.this.securityQuestionText.setText(question);
+		}
+		
+	}
 }
