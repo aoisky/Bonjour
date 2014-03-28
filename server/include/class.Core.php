@@ -9,8 +9,6 @@
  * @author	Xiangyu Bu
  * @date	Feb 20, 2014
  */
-
-require_once "class.UserExceptions.php";
  
 class Core {
 	
@@ -59,7 +57,7 @@ class Core {
 		$this->jsonDump(array("code" => 400, "errno" => "200", "message" => $error));
 	}
 	
-	public function dieUserException(UserException $e, $extra = null){
+	public function dieUserException(Exception $e, $extra = null){
 		$a = array(
 			"code" => $e->getCode(),
 			"errno" => $e->getErrno(),
@@ -137,6 +135,11 @@ class Core {
 	
 	public function isValidEmail($str){
 		return filter_var($str, FILTER_VALIDATE_EMAIL);
+	}
+	
+	public function isValidDate($str){
+		$f = explode("-", $str);	//YYYY-mm-dd
+		return checkdate($f[1], $f[2], $f[0]); // !
 	}
 	
 	public function sendEmail($address, $subject = "", $content = ""){

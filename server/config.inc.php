@@ -1,16 +1,12 @@
 <?php
 /**
- * config.inc.php
- * 
- * Store the basic configurations of the program.
- *
- * @author	Xiangyu Bu
- * @date	Feb 06, 2014
+ * The configuration file of the program
  */
 
-// enable debug
-if (true){
-	error_reporting( E_ALL | E_STRICT );
+define("DEBUG_MODE", true);
+
+if (DEBUG_MODE) {
+	error_reporting(E_ALL | E_STRICT);
 	ini_set('display_errors', '1');
 	ini_set('display_startup_errors', true);
 	
@@ -20,7 +16,7 @@ if (true){
 		die("PHP < 5.3.7 !");
 	} else if (version_compare(PHP_VERSION, '5.5.0', '<')) {
 		// For PHP < 5.5, include this library for password hashing functions
-		require_once("include/lib.password.php");
+		require_once "include/lib.password.php";
 	}
 }
 
@@ -33,15 +29,5 @@ $db_params = array(
 	"database" => "bonjour_demo",
 );
 
-$profile_fields = "gender|birthday|desiredRange|phone";
-
-/*
-$db_params = array(
-	"host" => "localhost", 
-	"username" => "xb", 
-	"password" => "yBx7JRV7EuzqFYWf", 
-	"database" => "bonjour_demo",
-);
-*/
 require_once "include/class.Database.php";
 require_once "include/class.Core.php";

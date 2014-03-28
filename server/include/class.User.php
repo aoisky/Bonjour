@@ -7,20 +7,21 @@
  * @date	Feb 20, 2014
  */
 
-require_once "class.UserExceptions.php";
-require_once "class.UserProfile.php";
-
 class User{
-	
-	private $DEBUG_MODE = false;
-	
 	private $core = null;
 	private $db = null;
-	
-	public $user_profile = null;
-	private $logged_in = false;
+	public $user_info = array();
 	public $logged_in_user = "";
-
+	private $logged_in = false;
+	private $DEBUG_MODE = false;
+	
+	public static $DEFAULT_USER_PROFILE = array(
+		"gender" => "male",
+		"birthday" => "2014-02-12",
+		"desiredRange" => 10,
+		"phone" => ""
+	);
+	
 	public function __construct(Core $c, Database $d, $t) {
 		$this->core = $c;
 		$this->db = $d;
@@ -36,7 +37,7 @@ class User{
 	public function isUser() {
 		return $this->logged_in;
 	}
-
+	
 	public function logIn($username = "", $password = "", $token = "") {
 		
 		if ((!$this->core->isValidUserName($username) and !$this->core->isValidEmail($username)) or !$this->core->isValidPassword($password))
@@ -44,7 +45,7 @@ class User{
 			
 		$username = $this->db->escapeStr($username);
 			
-		$sql = "SELECT user_name, user_email, user_password, user_lastActiveTime FROM users ". 
+		$sql = "SELECT user_id, user_name, user_email, user_password, user_lastActiveTime, user_avatar FROM users ". 
 				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
 		
 		$query = $this->db->selectQuery($sql);
@@ -53,7 +54,7 @@ class User{
 		if ($rows == 1) {
 			if (password_verify($password, $query[0]["user_password"])) {
 				$this->username = $query[0]["user_name"];
-				$this->user_profile = $query[0];
+				$this->user_info = $query[0];
 				$this->logged_in = true;
 				return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
 			} else 
@@ -79,8 +80,8 @@ class User{
 		
 		if ($rows == 1) {
 			if (password_verify($this->core->getOriginalToken($username, $query[0]["user_lastActiveTime"]), $token)) {
-				$this->username = $username;
-				$this->user_profile = $query[0];
+				$this->logged_in_user = $username;
+				$this->user_info = $query[0];
 				$this->logged_in = true;
 				return true;
 			}
@@ -97,7 +98,7 @@ class User{
 		$this->db->updateQuery($sql);
 	}
 	
-	public function registerNewUser($username = "", $password = "", $repeatpass = "", $useremail = "") {
+	public function createUser($username = "", $password = "", $repeatpass = "", $useremail = "") {
 	
 		if (empty($username)) {
 			throw new RegisterException("Empty Username.");
@@ -140,12 +141,12 @@ class User{
 				
 				if ($this->db->insertQuery($sql)) {
 					
-					$sql = "SELECT user_lastActiveTime FROM users WHERE user_name = '" . $username . "';";
+					$sql = "SELECT id, user_lastActiveTime FROM users WHERE user_name = '" . $username . "';";
 					
 					$query = $this->db->selectQuery($sql);
 
 					if (sizeof($query) == 1) {
-						return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
+						return array("id" => $query[0]["user_lastActiveTime"], "token" => $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]));
 					}
 				
 				} else 
@@ -261,16 +262,17 @@ class User{
 		$rows = $this->db->getNumOfRecords();
 		
 		if ($rows == 1){
-			return new UserProfile(stripslashes($query[0]["user_profile"]));
+			if (empty($query[0]["user_profile"])) return self::$DEFAULT_USER_PROFILE;
+			else return json_decode($query[0]["user_profile"], true);
 		} else 
 			throw new UserProfileException("The specified user does not exist.");
 	}
 	
-	public function setProfile($username, UserProfile $prof){
+	public function setProfile($username, $prof){
 		if ($username == null or $username == "" or (!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)))
 			throw new UserProfileException("Username is empty or of invalid format.");
 		
-		$sql = "UPDATE users SET user_profile=\"" . $this->db->escapeStr($prof->toJsonStr()) . "\" WHERE user_name='" . $username . "' OR user_email='" . $username . "';";
+		$sql = "UPDATE users SET user_profile=\"" . $this->db->escapeStr(json_encode($prof)) . "\" WHERE user_name='" . $username . "' OR user_email='" . $username . "' LIMIT 1;";
 		$this->db->updateQuery($sql);
 	}
 	
@@ -289,5 +291,61 @@ class User{
 		return $query;
 	}
 	
+	public function setUserAvatar($id, $img_str){
+		$img = imagecreatefromstring($img_str);
+		if (!$img) throw new UserAvatarException("Invalid image data");
+		imagepng($img, realpath(dirname(__FILE__) . "/../public/upload") . "/user_" . $id . "_avatar.png", 9,  PNG_ALL_FILTERS);
+		$sql = "UPDATE users SET user_avatar=\"" . $this->db->escapeStr("/public/upload/user_" . $id . "_avatar.png") . "\" WHERE user_id=" . $id . " LIMIT 1;";
+		$this->db->updateQuery($sql);
+		return "/public/upload/user_" . $id . "_avatar.png";
+	}
+}
+
+class UserException extends Exception {
+	protected $errno;
 	
+	public function __construct($message = "", $code = 0, $errno = "0"){
+		$this->errno = $errno;
+		parent::__construct($message, $code);
+	}
+	
+	public function getErrno(){
+		return $this->errno;
+	}
+}
+
+class LoginException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 400, "200");
+	}
+}
+
+class RegisterException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 400, "100");
+	}
+}
+
+class ResetPassException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 400, "300");
+	}
+}
+
+class EmptyFieldException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 400, "400");
+	}
+}
+
+class UserProfileException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 400, "500");
+	}
+}
+
+class UserAvatarException extends UserException {
+	public function __construct($message = ""){
+		parent::__construct($message, 500, "600");
+	}
 }

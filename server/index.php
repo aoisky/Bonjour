@@ -9,7 +9,7 @@
  */
 
 include "config.inc.php";
-
+include "include/class.User.php";
 ?>
 <h1>A demo html log in box</h1>
 
@@ -145,10 +145,10 @@ include "config.inc.php";
     <input class="login_input" type="text" name="access_token" autocomplete="off" required />
 	<br />
 	<?php
-	$profile_fields_array = explode("|", $profile_fields);
-	foreach ($profile_fields_array as $key){
+	$profile_fields_array = User::$DEFAULT_USER_PROFILE;
+	foreach ($profile_fields_array as $key => $val){
 		print "<label for=\"up_input_" . $key . "\">" . $key . "</label>\n";
-		print "<input id=\"up_input_" . $key . "\" class=\"login_input\" type=\"text\" name=\"" . $key . "\" autocomplete=\"off\" /><br />\n";	
+		print "<input id=\"up_input_" . $key . "\" class=\"login_input\" type=\"text\" name=\"" . $key . "\" value=\"".$val."\" /><br />\n";	
 	}
 	?>
 	

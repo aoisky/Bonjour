@@ -25,8 +25,10 @@ if ($action == "register"){
 	if ($user->isUser()) $app->dieLoginError("You are already logged in.");
 	
 	try {
-		$tok = $user->registerNewUser($app->getPOST("username"), $app->getPOST("password"), $app->getPOST("retype"), $app->getPOST("email"));
-		$app->exitRegisterSuccess($tok);
+		$user_info = $user->createUser($app->getPOST("username"), $app->getPOST("password"), $app->getPOST("retype"), $app->getPOST("email"));
+		if (isset($_POST["avatar"]))
+			$user->setUserAvatar($user_info["id"], base64_decode($app->getPOST("avatar")));
+		$app->exitRegisterSuccess($user_info["token"]);
 	} catch (RegisterException $e) {
 		$app->dieUserException($e);
 	}
@@ -47,7 +49,6 @@ if ($action == "register"){
 	$user->logOut();
 	$app->exitLogout();
 } elseif ($action == "getSecurityQuestions") {
-	// dump the security questions to json
 	
 	$app->exitWithArrayData($app->security_questions);
 } elseif ($action == "forgotPassword") {
@@ -102,7 +103,7 @@ if ($action == "register"){
 	//TODO: finish the stub
 	try {
 		$targetUser = $app->getPOST("targetUser");
-		$profile = $user->getProfile($targetUser)->getArray();
+		$profile = $user->getProfile($targetUser);
 		$app->exitWithArrayData($profile);
 	} catch (UserProfileException $e) {
 		$app->dieUserException($e);
@@ -116,23 +117,23 @@ if ($action == "updateProfile") {
 	
 	try {
 		$myProfile = $user->getProfile($user->logged_in_user);
-		$profile_fields_array = explode("|", $profile_fields);
-		foreach ($profile_fields_array as $key){
+		foreach ($myProfile as $key => $val){
 			if (isset($_POST[$key])){
 				$v = $app->getPOST($key);
-				if ($key == "birthday"){
-					$f = explode("-", $v);	//YYYY-mm-dd
-					if (!checkdate($f[1], $f[2], $f[0]))
+				if ($key == "birthday" and !$app->isValidDate($v))
 						throw new UserProfileException("The birthday format is not valid.");
-				}
-				$myProfile->updateField($key, $app->filterHtml($v));
-			} else {
-				$myProfile->removeField($key);
+				$myProfile[$key] = $app->filterHtml($v);
 			}
 		}
 		$user->setProfile($user->logged_in_user, $myProfile);
-		$app->exitWithArrayData($myProfile->getArray());
-	} catch (UserProfileException $e) {
+		
+		if (isset($_POST["avatar"]))
+			$avatar_url = $user->setUserAvatar($user->user_info["user_id"], base64_decode($app->getPOST("avatar")));
+		else $avatar_url = $user->user_info["user_avatar"];
+		
+		$myProfile["avatar"] = $avatar_url;
+		$app->exitWithArrayData($myProfile);
+	} catch (UserException $e) {
 		$app->dieUserException($e);
 	}
 	
@@ -142,7 +143,7 @@ if ($action == "updateProfile") {
 } else if ($action == "upload_photo") {
 	//TODO: finish the stub
 	
-	require "include/class.FileUploadHandler.php";
+	
 	$upload_handler = new UploadHandler();
 	
 } else if ($action == "delete_photo") {
