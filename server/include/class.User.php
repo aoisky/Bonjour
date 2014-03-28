@@ -170,7 +170,7 @@ class User{
 		if ($newPassword != $retypeNewPassword)
 			throw new ResetPassException("New password and retype new password do not match.");
 		
-		if ((!$this->core->isValidUserName($username) and ! $this->core->isValidEmail($username)) or !$this->core->isValidPassword($newPassword) or ($token == "" and !$this->core->isValidPassword($oldPassword)))
+		if ((!$this->core->isValidUserName($userName) and ! $this->core->isValidEmail($userName)) or !$this->core->isValidPassword($newPassword) or ($token == "" and !$this->core->isValidPassword($oldPassword)))
 			throw new ResetPassException("Username or password are not of valid format.");
 		
 		
