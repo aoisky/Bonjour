@@ -2,6 +2,7 @@ package edu.purdue.cs.hineighbor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,6 +53,7 @@ public class APIHandler {
 	public static final String PHONE = "phone";
 	public static final String DATA = "data";
 	public static final String MATCHINGS = "matchings";
+	public static final String HOBBY = "hobby";
 	
 	/**
 	 * Utility function
@@ -108,6 +110,9 @@ public class APIHandler {
 				//Create Default user profile
 				UserInfo userInfo = new UserInfo(context, userName, accessToken, password);
 				return sqlHandler.addUser(userInfo);
+			}else{
+				Log.d(LOG_TAG, "Login: set access token succefully");
+				return sqlHandler.getUserIdByUserName(userName);
 			}
 			
 		}
@@ -133,19 +138,36 @@ public class APIHandler {
 		userName = userName.substring(0,userName.indexOf("@"));
 		
 		String regStr = String.format("action=register&username=%s&email=%s&password=%s&retype=%s", userName, email, password, password);
-
+		regStr = regStr.concat("&age=" + age);
+		
+		if(userIcon != null){
+			
+			ByteArrayOutputStream blob = new ByteArrayOutputStream();
+			userIcon.compress(Bitmap.CompressFormat.PNG, 90, blob);
+		
+			byte[] bitmapdata = blob.toByteArray();
+			String avatarBase64 = Base64.encodeBytes(bitmapdata);
+			
+			try {
+				regStr = regStr.concat("&avatar=" + URLEncoder.encode(avatarBase64,"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		String responseStr = apiConnection(regStr);
 		
 		int codeInt = APIHandler.getResponseCode(responseStr);
-		
+
 		if(codeInt == 200){
 			
-			String accessToken = APIHandler.getStringFromJSON(responseStr, "access_token");
-			
+			String accessToken = APIHandler.getStringFromJSON(responseStr, "token");
+			//String avatarPath = APIHandler.getStringFromJSON(responseStr, "avatar");
 			
 			SQLHandler sqlHandler = SQLHandler.getInstance(context);
 			
-			UserInfo userInfo = new UserInfo(userName, accessToken, 0, userIcon, age, userName, password, gender);
+			UserInfo userInfo = new UserInfo(userName, accessToken, age, userName, password, gender);
 			
 			long userId = sqlHandler.addUser(userInfo);
 			
@@ -217,6 +239,19 @@ public class APIHandler {
 		SQLHandler sql = SQLHandler.getInstance(context);
 		String userName = sql.getUserNameByUserId(userId);
 		return userName;
+    }
+    
+
+    /**
+     * Get user Id by userName
+     * @param context
+     * @param userName
+     * @return userId
+     */
+    public static long getUserId(Context context, String userName){
+    	SQLHandler sql = SQLHandler.getInstance(context);
+    	long userId = sql.getUserIdByUserName(userName);
+    	return userId;
     }
     
     /**
@@ -360,6 +395,17 @@ public class APIHandler {
 			return null;
 		}
     	
+    }
+    
+    /**
+     * 
+     * @param userName
+     * @return security question set result
+     */
+    public static boolean setUserSecurityQuestion(String userName, int questionNo, String answer){
+    	String format = "action=setSecurityAnswer&username=blah&answer=blah";
+    	
+    	return true;
     }
     
     /**
@@ -622,6 +668,7 @@ public class APIHandler {
     	
     }
     
+    
     /**
      * Return a HashMap that contains information of the JSON index
      * @param responseStr
@@ -660,6 +707,7 @@ public class APIHandler {
     	
     }
     
+    
     /**
      * Get String from JSON
      * @param responseStr
@@ -672,6 +720,7 @@ public class APIHandler {
     	try {
 			JSONObject object = (JSONObject) tokener.nextValue();
 			String str = object.getString(jsonIndex);
+			Log.d(LOG_TAG, "Obtained JSON string: " + str);
 			return str;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -757,10 +806,18 @@ public class APIHandler {
 	        
 	        BufferedReader reader = new BufferedReader(new InputStreamReader(userData));
 	        String receivedStr = reader.readLine();
+	        
+	        String otherInfo;
+	        
+	        while((otherInfo = reader.readLine()) != null){
+	        	Log.d(LOG_TAG, "Other received info: " + otherInfo);
+	        }
+	        
 	        reader.close();
 	        urlConnect.disconnect();
 	        
 	        Log.d(LOG_TAG,"Returned JSON Info:" + receivedStr); //Log Info for debug
+	        
 	        return receivedStr;
 	        
 		} catch (IOException e) {

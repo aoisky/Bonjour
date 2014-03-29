@@ -34,7 +34,7 @@
         <activity
             android:name="edu.purdue.cs.hineighbor.SignupActivity"
             android:label="@string/title_activity_signup"
-            android:parentActivityName="me.imvoice.app.LoginActivity" >
+            android:parentActivityName="edu.purdue.cs.hineighbor.LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.purdue.cs.hineighbor.LoginActivity" />

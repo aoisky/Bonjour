@@ -14,9 +14,11 @@ public class UserProfileFragment extends Fragment {
 	private SQLHandler sqlHandler;
 	private String userName;
 	private ImageView userProfileAvatar;
+	private TextView userNameText;
 	private TextView genderText;
 	private TextView birthdayText;
-	private TextView ageText;
+	private TextView hobbyText;
+	private TextView desireRangeText;
 	private TextView phoneText;
 	private long userId = 0L;
 	
@@ -25,11 +27,12 @@ public class UserProfileFragment extends Fragment {
 		
 		View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
 		
-		
+		userNameText = (TextView) rootView.findViewById(R.id.profile_user_name);
 		userProfileAvatar = (ImageView) rootView.findViewById(R.id.profile_image);
 		genderText = (TextView) rootView.findViewById(R.id.profile_user_gender);
 		birthdayText = (TextView) rootView.findViewById(R.id.profile_user_birthday);
-		ageText = (TextView) rootView.findViewById(R.id.profile_user_age);
+		hobbyText = (TextView) rootView.findViewById(R.id.profile_user_hobby);
+		desireRangeText = (TextView) rootView.findViewById(R.id.profile_user_desired_range);
 		phoneText = (TextView) rootView.findViewById(R.id.profile_user_phone_num);
 		
 		return rootView;
@@ -46,6 +49,8 @@ public class UserProfileFragment extends Fragment {
 		
 		if(userId != 0L){
 			userName = APIHandler.getUserName(this.getActivity(), (int)userId);
+			userNameText.setText(userName);
+			
 			if(userName != null){
 				UserProfileTask userProfileTask = new UserProfileTask();
 				userProfileTask.execute(userName);
@@ -83,6 +88,14 @@ public class UserProfileFragment extends Fragment {
 				String birthday = bundle.getString(APIHandler.BIRTHDAY);
 				if(birthday != null){
 					UserProfileFragment.this.birthdayText.setText(birthday);
+				}
+				
+				String desiredRange = bundle.getString(APIHandler.DESIRED_RANGE);
+				
+				if(desiredRange != null){
+					
+					UserProfileFragment.this.desireRangeText.setText(desiredRange);
+					
 				}
 				
 				String phoneNum = bundle.getString(APIHandler.PHONE);

@@ -2,6 +2,9 @@ package edu.purdue.cs.hineighbor;
 
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,10 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 /**
  * Signup fragment for user detail information
@@ -25,8 +30,12 @@ import android.widget.Toast;
  */
 public class SignupDetailsFragment extends Fragment implements OnClickListener{
 	
-	private EditText nickNameEdit;
+	//private EditText nickNameEdit;
 	private EditText ageEdit;
+	private EditText hobbyText;
+	private EditText securityAnswerText;
+	private Spinner securitySpinner;
+	
 	private RadioGroup genderRadio;
 	
 	private Button registerBtn;
@@ -38,6 +47,7 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 	boolean gender;
 	int age;
 	Bitmap userIconBitmap;
+	HashMap<String, String> securityHashMap;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,11 +55,21 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		View rootView = inflater.inflate(R.layout.fragment_signup_details,
 				container, false);
 		registerBtn = (Button)rootView.findViewById(R.id.signup_button_register);
-		nickNameEdit = (EditText) rootView.findViewById(R.id.signup_nickname);
+		//nickNameEdit = (EditText) rootView.findViewById(R.id.signup_nickname);
 		ageEdit = (EditText) rootView.findViewById(R.id.signup_age);
+		hobbyText = (EditText) rootView.findViewById(R.id.signup_hobby);
+		securityAnswerText = (EditText) rootView.findViewById(R.id.signup_security_answer);
+		securitySpinner = (Spinner) rootView.findViewById(R.id.security_question_spinner);
 		genderRadio = (RadioGroup) rootView.findViewById(R.id.signup_gender_radio_group);
 		registerBtn.setOnClickListener(this);
 		return rootView;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState){
+		super.onActivityCreated(savedInstanceState);
+		
+		new RetrieveQuestionSetTask().execute();
 	}
 	
 	@Override
@@ -100,15 +120,22 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		
 		userIconBitmap = ((BitmapDrawable)userIcon.getDrawable()).getBitmap();
 
-		if(nickNameEdit.getText().toString().equals("")){
-			nickNameEdit.setError("Invalid nickname");
-			nickNameEdit.requestFocus();
-			return;
-		}
 		
 		if(ageEdit.getText().toString().equals("")){
 			ageEdit.setError("Invalid Age");
 			ageEdit.requestFocus();
+			return;
+		}
+		
+		if(hobbyText.getText().toString().equals("")){
+			hobbyText.setError("Invalid Hobby");
+			hobbyText.requestFocus();
+			return;
+		}
+		
+		if(securityAnswerText.getText().toString().equals("")){
+			securityAnswerText.setError("Invalid Security Answer");
+			securityAnswerText.requestFocus();
 			return;
 		}
 		
@@ -132,15 +159,39 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		
 	}
 	
+	private class RetrieveQuestionSetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
+
+		@Override
+		protected HashMap<String,String> doInBackground(Void... params) {
+
+			HashMap<String,String> securityHashMap = APIHandler.getSecurityQuestions();
+			
+			return securityHashMap;
+		}
+		
+		@Override
+		protected void onPostExecute(final HashMap<String,String> securityHashMap){
+			SignupDetailsFragment.this.securityHashMap = securityHashMap;
+			ArrayList<String> questionList = new ArrayList<String>();
+			questionList.addAll(securityHashMap.values());
+			
+			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignupDetailsFragment.this.getActivity(),
+					android.R.layout.simple_spinner_item, questionList);
+				dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				securitySpinner.setAdapter(dataAdapter);
+		}
+		
+	}
+	
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserRegisterTask extends AsyncTask<Void, Void, Long> {
+	private class UserRegisterTask extends AsyncTask<Void, Void, Long> {
 		@Override
 		protected Long doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
-
+			
 			Long userId = APIHandler.register(SignupDetailsFragment.this.getActivity(), SignupDetailsFragment.this.email, password, confirmPassword, gender, age, userIconBitmap);
 			return userId;
 		}

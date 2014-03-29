@@ -20,18 +20,17 @@ public class UserInfo{
 
 	private int uid;
 	private String userName;
-	private Bitmap userAvatar;
+	private String userAvatar;
 	private int age;
 	private String email;
 	private String md5Password;
 	private boolean gender;
 	private String accessToken;
 	
-	public UserInfo(String userName, String accessToken, int uid, Bitmap userAvatar, int age, String email, String md5Password, boolean gender){
-		this.uid = uid;
+	public UserInfo(String userName, String accessToken, int age, String email, String md5Password, boolean gender){
 		this.userName = userName;
 		this.accessToken = accessToken;
-		this.userAvatar = userAvatar;
+
 		this.age = age;
 		this.email = email;
 		this.md5Password = md5Password;
@@ -42,7 +41,7 @@ public class UserInfo{
 		this.uid = 0;
 		this.userName = userName;
 		this.accessToken = accessToken;
-		this.userAvatar = BitmapFactory.decodeResource(context.getResources(), R.drawable.nouser);
+		//this.userAvatar = BitmapFactory.decodeResource(context.getResources(), R.drawable.nouser);
 		this.age = 0;
 		this.email = userName;
 		this.md5Password = md5Password;
@@ -61,7 +60,7 @@ public class UserInfo{
 		return userName;
 	}
 	
-	public Bitmap getUserAvatar(){
+	public String getUserAvatarPath(){
 		return userAvatar;
 	}
 	

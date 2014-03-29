@@ -154,6 +154,20 @@ public class SQLHandler extends SQLiteOpenHelper{
 
 	}
 	
+	public long getUserIdByUserName(String userName){
+		String getUserIdQuery = "SELECT " + USER_ID +  " FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + " = \"" + userName + "\"";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(getUserIdQuery, null);
+		
+		cursor.moveToFirst();
+        
+        if(cursor.isNull(0)){
+        	return 0L;
+        }
+        return cursor.getLong(0);
+		
+	}
+	
 	public String getUserNameByUserId(int userId){
 		String getUserQuery = "SELECT " + USER_NAME + " FROM " + USER_TABLE_NAME + " WHERE " + USER_ID + " = \"" + userId + "\"";
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -191,7 +205,8 @@ public class SQLHandler extends SQLiteOpenHelper{
 	
 	
 	public boolean setUserAccessToken(String userName, String userAccessToken){
-		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE \"" + USER_NAME + "\" = \"" + userName + "\"";
+		Log.d(LOG_TAG, "Updating user access token in the database");
+		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + " = \"" + userName +"\"";
 	    SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(getUserQuery, null);
         int count = cursor.getCount();
@@ -203,11 +218,12 @@ public class SQLHandler extends SQLiteOpenHelper{
         db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(USER_ACCESS_TOKEN, userAccessToken);
-		
-		long error = db.insert(USER_TABLE_NAME, null, values);
+
+		long error = db.update(USER_TABLE_NAME, values, USER_NAME + " = \"" + userName +"\"", null);
+
         
 		//If insert failed
-		if(error == -1){
+		if(error == 0){
 			return false;
 		}
 		

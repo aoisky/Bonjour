@@ -92,13 +92,7 @@ public class SidebarFragment extends ListFragment {
 				switch(itemInt){
 
 					case 1: //User Info page
-						Intent userInfoIntent = new Intent(getActivity(), UserProfile.class);
-						Bundle bundle = SidebarFragment.this.getArguments();
-						if(bundle != null){
-							long userId = bundle.getLong(LoginActivity.USER_ID);
-							userInfoIntent.putExtra(LoginActivity.USER_ID, userId);
-							startActivity(userInfoIntent);
-						}
+
 					break;
 					
 					

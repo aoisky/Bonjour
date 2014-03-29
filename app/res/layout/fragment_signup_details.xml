@@ -8,23 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
     
-    
-    <TextView
-        android:id="@+id/nicknameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dip" 
-        android:text="Nickname">
-	</TextView>
-    
-    <EditText
-        android:id="@+id/signup_nickname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dip"
-        android:inputType="text">
-
-    </EditText>
+   
     
     <TextView
         android:id="@+id/ageTextView"
@@ -39,10 +23,51 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dip"
-        android:inputType="number">"
+        android:inputType="number">
+
+    </EditText>
+    
+       <TextView
+        android:id="@+id/hobby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Hobby">
+	</TextView>
+    
+    <EditText
+        android:id="@+id/signup_hobby"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
 
     </EditText>
 
+     <TextView
+        android:id="@+id/security_question_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Security Question">
+	</TextView>
+	
+     <Spinner
+       	android:id="@+id/security_question_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         />
+     
+   <EditText
+        android:id="@+id/signup_security_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
+
+    </EditText>
+     
+    
     <TextView
         android:id="@+id/genderTextView"
         android:layout_width="match_parent"
@@ -73,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/aritcle_btns"
         android:textColor="@android:color/white"
         android:text="Register Account" />
