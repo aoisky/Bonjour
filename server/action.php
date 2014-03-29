@@ -19,17 +19,35 @@ $action = $app->getPOST("action");
 $access_token = $app->getPOST("access_token");
 $user = new User($app, $database, $access_token);
 
+file_put_contents("log.txt", var_export($_POST, true));
+
 // the following actions allow guests to perform
 if ($action == "register"){
 	// register a user
 	if ($user->isUser()) $app->dieLoginError("You are already logged in.");
 	
 	try {
-		$user_info = $user->createUser($app->getPOST("username"), $app->getPOST("password"), $app->getPOST("retype"), $app->getPOST("email"));
-		if (isset($_POST["avatar"]))
-			$user->setUserAvatar($user_info["id"], base64_decode($app->getPOST("avatar")));
-		$app->exitRegisterSuccess($user_info["token"]);
-	} catch (RegisterException $e) {
+		$myProfile = User::$DEFAULT_USER_PROFILE;
+		
+		foreach ($myProfile as $key => $val){
+			if (isset($_POST[$key])){
+				$v = $app->getPOST($key);
+				if ($key == "avatar") {
+					$v = $_POST["avatar"];
+					$avatar_url = $user->saveUserAvatar(base64_decode($v));
+					$myProfile["avatar"] = $avatar_url;
+				} else {
+					if ($key == "birthday" and !$app->isValidDate($v))
+						throw new UserProfileException("The birthday format is not valid.");
+					$myProfile[$key] = $app->filterHtml($v);
+				}
+			}
+		}
+		
+		$user_info = $user->createUser($app->getPOST("username"), $app->getPOST("password"), $app->getPOST("retype"), $app->getPOST("email"), $myProfile);
+		
+		$app->exitRegisterSuccess($user_info);
+	} catch (Exception $e) {
 		$app->dieUserException($e);
 	}
 	
@@ -62,6 +80,18 @@ if ($action == "register"){
 		//		and send it to the user's email address
 		
 		$app->dieUserException($e, array("proceed_token" => password_hash($username . ":reset_pass", PASSWORD_DEFAULT)));
+	} catch (ResetPassException $e) {
+		$app->dieUserException($e);
+	}
+} elseif ($action == "setSecurityAnswer") {
+	$username = $app->getPOST("username");
+	$question = $app->getPOST("question");
+	$answer = $app->getPOST("answer");
+	try {
+		if (!array_key_exists($question, $app->security_questions))
+			throw new Exception("Please choose one security question from the list");
+		$user->setSecurityCreds($username, $question, $answer);
+		$app->exitChangeSecQA();
 	} catch (ResetPassException $e) {
 		$app->dieUserException($e);
 	}
@@ -117,37 +147,28 @@ if ($action == "updateProfile") {
 	
 	try {
 		$myProfile = $user->getProfile($user->logged_in_user);
+		
 		foreach ($myProfile as $key => $val){
 			if (isset($_POST[$key])){
 				$v = $app->getPOST($key);
-				if ($key == "birthday" and !$app->isValidDate($v))
+				if ($key == "avatar") {
+					$v = $_POST["avatar"];
+					$avatar_url = $user->saveUserAvatar(base64_decode($v));
+					$myProfile["avatar"] = $avatar_url;
+				} else {
+					if ($key == "birthday" and !$app->isValidDate($v))
 						throw new UserProfileException("The birthday format is not valid.");
-				$myProfile[$key] = $app->filterHtml($v);
+					$myProfile[$key] = $app->filterHtml($v);
+				}
 			}
 		}
 		$user->setProfile($user->logged_in_user, $myProfile);
-		
-		if (isset($_POST["avatar"]))
-			$avatar_url = $user->setUserAvatar($user->user_info["user_id"], base64_decode($app->getPOST("avatar")));
-		else $avatar_url = $user->user_info["user_avatar"];
 		
 		$myProfile["avatar"] = $avatar_url;
 		$app->exitWithArrayData($myProfile);
 	} catch (UserException $e) {
 		$app->dieUserException($e);
 	}
-	
-} else if ($action == "update_photo") {
-	//TODO: finish the stub
-	
-} else if ($action == "upload_photo") {
-	//TODO: finish the stub
-	
-	
-	$upload_handler = new UploadHandler();
-	
-} else if ($action == "delete_photo") {
-	//TODO: finish the stub
 	
 } else if ($action == "change_password") {
 	

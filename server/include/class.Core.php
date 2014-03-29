@@ -80,7 +80,7 @@ class Core {
 	}
 	
 	public function exitRegisterSuccess($token) {
-		$this->jsonDump(array("code" => 200, "access_token" => $token));
+		$this->jsonDump(array("code" => 200, "user" => $token));
 	}
 	
 	public function exitLogout(){
@@ -89,6 +89,10 @@ class Core {
 	
 	public function exitChangePassword(){
 		$this->jsonDump(array("code" => 200, "message" => "Password successfully changed."));
+	}
+	
+	public function exitChangeSecQA(){
+		$this->jsonDump(array("code" => 200, "message" => "Security credentials successfully changed."));
 	}
 	
 	public function exitWithArrayData($a){
@@ -144,6 +148,7 @@ class Core {
 	
 	public function sendEmail($address, $subject = "", $content = ""){
 		// removed code
+		
 	}
 	
 	public function getRandomStr($len) {

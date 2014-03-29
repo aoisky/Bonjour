@@ -18,8 +18,11 @@ class User{
 	public static $DEFAULT_USER_PROFILE = array(
 		"gender" => "male",
 		"birthday" => "2014-02-12",
+		"age" => 13,
+		"hobby" => "cs",
 		"desiredRange" => 10,
-		"phone" => ""
+		"phone" => "",
+		"avatar" => ""
 	);
 	
 	public function __construct(Core $c, Database $d, $t) {
@@ -42,10 +45,10 @@ class User{
 		
 		if ((!$this->core->isValidUserName($username) and !$this->core->isValidEmail($username)) or !$this->core->isValidPassword($password))
 			throw new LoginException("Username or password not provided or of invalid format.");
-			
+		
 		$username = $this->db->escapeStr($username);
 			
-		$sql = "SELECT user_id, user_name, user_email, user_password, user_lastActiveTime, user_avatar FROM users ". 
+		$sql = "SELECT user_id, user_name, user_email, user_password, user_lastActiveTime, user_profile FROM users ". 
 				"WHERE user_name = '" . $username . "' OR user_email = '" . $username . "';";
 		
 		$query = $this->db->selectQuery($sql);
@@ -98,7 +101,7 @@ class User{
 		$this->db->updateQuery($sql);
 	}
 	
-	public function createUser($username = "", $password = "", $repeatpass = "", $useremail = "") {
+	public function createUser($username = "", $password = "", $repeatpass = "", $useremail = "", $user_profile = array()) {
 	
 		if (empty($username)) {
 			throw new RegisterException("Empty Username.");
@@ -121,7 +124,7 @@ class User{
 		} else {
 		
 			$this->db->connect();
-
+			
 			// escaping, additionally removing everything that could be (html/javascript-) code
 			$username = $this->db->escapeStr(strip_tags($username, ENT_QUOTES));
 			$useremail = $this->db->escapeStr(strip_tags($useremail, ENT_QUOTES));
@@ -131,22 +134,26 @@ class User{
 
 			$sql = "SELECT * FROM users WHERE user_name = '" . $username . "' OR user_email = '" . $useremail . "';";
 			$query_check_user_name = $this->db->selectQuery($sql);
-
+			
 			if (sizeof($query_check_user_name) > 0) {
 				throw new RegisterException("Sorry, that username or email address is already taken.");
 			} else {
 				// write new user's data into database
-				$sql = "INSERT INTO users (user_name, user_password, user_email)
-						VALUES('" . $username . "', '" . $user_password_hash . "', '" . $useremail . "');";
+				if (count($user_profile) == 0) $user_profile = self::$DEFAULT_USER_PROFILE;
+				
+				$user_profile_json = $this->db->escapeStr(json_encode($user_profile));
+				
+				$sql = "INSERT INTO users (user_name, user_password, user_email, user_profile)
+						VALUES('" . $username . "', '" . $user_password_hash . "', '" . $useremail . "', '" . $user_profile_json . "');";
 				
 				if ($this->db->insertQuery($sql)) {
 					
-					$sql = "SELECT id, user_lastActiveTime FROM users WHERE user_name = '" . $username . "';";
+					$sql = "SELECT user_id, user_lastActiveTime FROM users WHERE user_name = '" . $username . "';";
 					
 					$query = $this->db->selectQuery($sql);
 
 					if (sizeof($query) == 1) {
-						return array("id" => $query[0]["user_lastActiveTime"], "token" => $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]));
+						return array("token" => $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]), "profile" => $user_profile);
 					}
 				
 				} else 
@@ -230,11 +237,8 @@ class User{
 				$this->username = $username;
 				$this->logged_in = true;
 				return $this->core->getAccessToken($username, $query[0]["user_lastActiveTime"]);
-			} else 
-				throw new ResetPassException("Wrong security answer.");
-			
-		} else 
-			throw new ResetPassException("The specified user does not exist.");
+			} else throw new ResetPassException("Wrong security answer.");
+		} else throw new ResetPassException("The specified user does not exist.");
 	}
 	
 	public function generateNewPassword($username, $token){
@@ -291,13 +295,18 @@ class User{
 		return $query;
 	}
 	
-	public function setUserAvatar($id, $img_str){
+	public function saveUserAvatar($img_str){
+		//error_reporting(E_ERROR);
 		$img = imagecreatefromstring($img_str);
-		if (!$img) throw new UserAvatarException("Invalid image data");
-		imagepng($img, realpath(dirname(__FILE__) . "/../public/upload") . "/user_" . $id . "_avatar.png", 9,  PNG_ALL_FILTERS);
-		$sql = "UPDATE users SET user_avatar=\"" . $this->db->escapeStr("/public/upload/user_" . $id . "_avatar.png") . "\" WHERE user_id=" . $id . " LIMIT 1;";
-		$this->db->updateQuery($sql);
-		return "/public/upload/user_" . $id . "_avatar.png";
+		if (!$img) return "";
+		$tmp_filename = $this->core->getRandomStr(24);
+		if (imagepng($img, realpath(dirname(__FILE__) . "/../public/upload") . "/" . $tmp_filename . ".png", 9,  PNG_ALL_FILTERS))
+			return "/public/upload/" . $tmp_filename . ".png";
+		return "";
+	}
+	
+	public function setSecurityCreds($userName, $q, $a){
+		$this->db->updateQuery("UPDATE users SET user_securityQuestion=\"" . $q . "\", user_securityAnswerHash=\"" . password_hash($a, PASSWORD_DEFAULT) . "\" WHERE user_name = '" . $userName . "' OR user_email = '" . $userName . "' LIMIT 1;");
 	}
 }
 
