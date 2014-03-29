@@ -79,8 +79,9 @@ class Core {
 		$this->jsonDump($a);
 	}
 	
-	public function exitRegisterSuccess($token) {
-		$this->jsonDump(array("code" => 200, "user" => $token));
+	public function exitRegisterSuccess($array) {
+		$array["code"] = 200;
+		$this->jsonDump($array);
 	}
 	
 	public function exitLogout(){
