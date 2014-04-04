@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,14 +30,13 @@ import android.widget.Toast;
  * @author Yudong Yang
  *
  */
-public class SignupDetailsFragment extends Fragment implements OnClickListener{
+public class SignupDetailsFragment extends Fragment implements OnClickListener, OnItemSelectedListener{
 	
 	//private EditText nickNameEdit;
 	private EditText ageEdit;
 	private EditText hobbyText;
 	private EditText securityAnswerText;
 	private Spinner securitySpinner;
-	
 	private RadioGroup genderRadio;
 	
 	private Button registerBtn;
@@ -48,6 +49,9 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 	int age;
 	Bitmap userIconBitmap;
 	HashMap<String, String> securityHashMap;
+	ArrayAdapter<String> dataAdapter;
+	ArrayList<String> questionList;
+	String selectedQuestion = null;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,16 +64,18 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		hobbyText = (EditText) rootView.findViewById(R.id.signup_hobby);
 		securityAnswerText = (EditText) rootView.findViewById(R.id.signup_security_answer);
 		securitySpinner = (Spinner) rootView.findViewById(R.id.security_question_spinner);
+		securitySpinner.setOnItemSelectedListener(this);
 		genderRadio = (RadioGroup) rootView.findViewById(R.id.signup_gender_radio_group);
 		registerBtn.setOnClickListener(this);
+
 		return rootView;
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState){
 		super.onActivityCreated(savedInstanceState);
-		
 		new RetrieveQuestionSetTask().execute();
+		
 	}
 	
 	@Override
@@ -171,11 +177,11 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		
 		@Override
 		protected void onPostExecute(final HashMap<String,String> securityHashMap){
-			SignupDetailsFragment.this.securityHashMap = securityHashMap;
-			ArrayList<String> questionList = new ArrayList<String>();
+			SignupDetailsFragment.this.securityHashMap = new HashMap<String, String>(securityHashMap);
+			SignupDetailsFragment.this.questionList = new ArrayList<String>();
 			questionList.addAll(securityHashMap.values());
 			
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignupDetailsFragment.this.getActivity(),
+			SignupDetailsFragment.this.dataAdapter = new ArrayAdapter<String>(SignupDetailsFragment.this.getActivity(),
 					android.R.layout.simple_spinner_item, questionList);
 				dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				securitySpinner.setAdapter(dataAdapter);
@@ -191,8 +197,23 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 		@Override
 		protected Long doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
+			String selectedNo = null;
 			
 			Long userId = APIHandler.register(SignupDetailsFragment.this.getActivity(), SignupDetailsFragment.this.email, password, confirmPassword, gender, age, userIconBitmap);
+			
+			if(userId == -1){
+				return userId;
+			}
+			
+			for(String questionNo : SignupDetailsFragment.this.securityHashMap.keySet()){
+				String question = SignupDetailsFragment.this.securityHashMap.get(questionNo);
+				if(question.equals(SignupDetailsFragment.this.selectedQuestion)){
+					selectedNo = questionNo;
+					break;
+				}
+				
+			}
+			APIHandler.setUserSecurityQuestion(SignupDetailsFragment.this.getActivity(), userId, selectedNo, securityAnswerText.getText().toString());
 			return userId;
 		}
 
@@ -219,5 +240,18 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener{
 			Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
 			SignupDetailsFragment.this.getActivity().finish();
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+		selectedQuestion = parent.getItemAtPosition(position).toString();
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -402,10 +402,24 @@ public class APIHandler {
      * @param userName
      * @return security question set result
      */
-    public static boolean setUserSecurityQuestion(String userName, int questionNo, String answer){
-    	String format = "action=setSecurityAnswer&username=blah&answer=blah";
+    public static boolean setUserSecurityQuestion(Context context, long userId, String questionNo, String answer){
+    	String format = "action=setSecurityAnswer&question=%s&username=%s&access_token=%s&answer=%s";
+    	String userName = APIHandler.getUserName(context, (int)userId);
+    	SQLHandler sqlHandler = SQLHandler.getInstance(context);
+    	String accessToken = sqlHandler.getUserAccessToken((int)userId);
     	
-    	return true;
+    	String responseStr = apiConnection(String.format(format, questionNo, userName, accessToken, answer));
+    	
+    	if(responseStr != null){
+			if(getResponseCode(responseStr) == 200){
+				return true;
+			}else{
+				return false;
+			}
+    	}
+				
+    	
+    	return false;
     }
     
     /**
