@@ -228,8 +228,11 @@ if ($action == "updateProfile") {
 		
 		$match_list = $user->getMatchings($json);
 		
-		$app->jsonDump(array("code" => 200, "matchings" => $match_list));
+		if (count($match_list) == 0) {
+			$app->jsonDump(array("code" => 400, "errno" => "700", "message" => "No match found."));
+		}
 		
+		$app->jsonDump(array("code" => 200, "matchings" => $match_list));
 		
 	} catch (Exception $e){
 	}

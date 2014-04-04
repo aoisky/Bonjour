@@ -280,19 +280,57 @@ class User{
 		$this->db->updateQuery($sql);
 	}
 	
+	function calcDistance($lat1, $lon1, $lat2, $lon2, $unit) {
+		$theta = $lon1 - $lon2;
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+		$dist = acos($dist);
+		$dist = rad2deg($dist);
+		$miles = $dist * 60 * 1.1515;
+		$unit = strtoupper($unit);
+		
+		if ($unit == "K") {
+			return ($miles * 1.609344);
+		} else if ($unit == "N") {
+			return ($miles * 0.8684);
+		} else {
+			return $miles;
+		}
+	}
+	
 	public function getMatchings($json){
-		// $longitude = $json["mLongitude"];
-		// $latitude = $json["mLatitude"];
+		$longitude = $json["mLongitude"];
+		$latitude = $json["mLatitude"];
+		// $distance = $this->calcDistance()
 		// $altitude = $json["mAltitude"];
 		// will include the requester herself
-		$sql = "SELECT user_id, user_email, user_profile, user_hobby FROM users " .
-				//
-				// ( 3959 * acos( cos( radians(43.493655) ) * cos( radians(" &  latitude & ") ) * cos( radians(" &  longitude & ") - radians(-1.474941) ) + sin( radians(43.493655) ) * sin( radians(" &  latitude & ") ) ) ) AS distance
-				// WHERE should include a distance check
-				// also add a LIMIT directive
-				";";
+		
+		$this->db->updateQuery("UPDATE users SET user_geoLatitude=\"" . $latitude . "\", user_geoLongitude=\"" . $longitude . "\" WHERE user_email=\"" . $this->logged_in_user . "\" OR user_name=\"" . $this->logged_in_user . "\" LIMIT 1;");
+		
+		$sql = "SELECT user_id, user_email, user_profile, (3959 * acos(cos(radians(" . $latitude . ")) ".
+				"* cos(radians(user_geoLatitude)) ".
+				"* cos(radians(user_geoLongitude) - radians(" . $longitude . ")) ".
+				"+ sin(radians(" . $latitude . ")) ".
+				"* sin(radians(user_geoLatitude)))) AS distance FROM users " .
+				";"; // should add a limit
 		$query = $this->db->selectQuery($sql);
-		return $query;
+		
+		$result = array();
+		foreach ($query as $k => $info) {
+			$item = array(
+				"user_id" => $info["user_id"],
+				"user_email" => $info["user_email"],
+				"distance" => $info["distance"],
+			);
+			$user_prof = json_decode($info["user_profile"]);
+			foreach($user_prof as $pk => $pv) {
+				$item[$pk] = $pv;
+			}
+			$result[] = $item;
+		}
+		
+		file_put_contents("matching.txt", var_export($result, true));
+		
+		return $result;
 	}
 	
 	public function saveUserAvatar($img_str){
