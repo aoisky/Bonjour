@@ -168,6 +168,7 @@ public class LoginActivity extends Activity {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
+			//Black box bug #28
 		} else if (mPassword.length() < 4) {
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
@@ -269,7 +270,7 @@ public class LoginActivity extends Activity {
 
 			if (success != -1) {
 				Intent homeIntent = new Intent(getBaseContext(), HomeActivity.class);
-				
+
 				homeIntent.putExtra(USER_ID, success);
 				startActivity(homeIntent);
 				finish();

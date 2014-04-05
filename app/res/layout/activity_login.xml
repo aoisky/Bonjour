@@ -93,6 +93,7 @@
           		 android:layout_marginTop="16dp"
                  android:paddingLeft="32dp"
                  android:paddingRight="32dp"
+
           		 android:text="@string/register" />    
             <Button
                 android:id="@+id/sign_in_button"
@@ -102,6 +103,8 @@
                 android:layout_marginTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:background="@drawable/aritcle_btns"
+        		android:textColor="@android:color/white"
                 android:text="@string/action_sign_in_register" />
             
             </LinearLayout>

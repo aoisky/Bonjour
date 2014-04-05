@@ -1,17 +1,29 @@
 package edu.purdue.cs.hineighbor;
 
+import java.io.InputStream;
+
 import android.app.Fragment;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserProfileFragment extends Fragment {
+/**
+ * User Profile Fragment
+ * @author Yudong Yang
+ *
+ */
+public class UserProfileFragment extends Fragment implements OnClickListener {
 
-	private SQLHandler sqlHandler;
+
 	private String userName;
 	private ImageView userProfileAvatar;
 	private TextView userNameText;
@@ -20,6 +32,7 @@ public class UserProfileFragment extends Fragment {
 	private TextView hobbyText;
 	private TextView desireRangeText;
 	private TextView phoneText;
+	private Button editProfileBtn;
 	private long userId = 0L;
 	
 	@Override
@@ -28,13 +41,14 @@ public class UserProfileFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
 		
 		userNameText = (TextView) rootView.findViewById(R.id.profile_user_name);
-		userProfileAvatar = (ImageView) rootView.findViewById(R.id.profile_image);
+		userProfileAvatar = (ImageView) rootView.findViewById(R.id.user_avatar_image);
 		genderText = (TextView) rootView.findViewById(R.id.profile_user_gender);
 		birthdayText = (TextView) rootView.findViewById(R.id.profile_user_birthday);
 		hobbyText = (TextView) rootView.findViewById(R.id.profile_user_hobby);
 		desireRangeText = (TextView) rootView.findViewById(R.id.profile_user_desired_range);
 		phoneText = (TextView) rootView.findViewById(R.id.profile_user_phone_num);
-		
+		editProfileBtn = (Button) rootView.findViewById(R.id.profile_user_edit_profile_btn);
+		editProfileBtn.setOnClickListener(this);
 		return rootView;
 		
 	}
@@ -54,15 +68,39 @@ public class UserProfileFragment extends Fragment {
 			if(userName != null){
 				UserProfileTask userProfileTask = new UserProfileTask();
 				userProfileTask.execute(userName);
+				
 			}
 
 		}
-
-		
 		
 	}
 	
-	public class UserProfileTask extends AsyncTask<String, Void, Bundle> {
+	 private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+	    	ImageView userAvatar;
+	    	
+	    	public DownloadImageTask(ImageView userAvatar){
+	    		this.userAvatar = userAvatar;
+	    	}
+	    	
+	        protected Bitmap doInBackground(String... urls) {
+	            String urldisplay = urls[0];
+	            Bitmap mIcon11 = null;
+	            try {
+	                InputStream in = new java.net.URL(urldisplay).openStream();
+	                mIcon11 = BitmapFactory.decodeStream(in);
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	            return mIcon11;
+	        }
+
+	        protected void onPostExecute(Bitmap result) {
+	        	userAvatar.setImageBitmap(result);
+	        }
+	        
+	    }
+	
+	private class UserProfileTask extends AsyncTask<String, Void, Bundle> {
 
 		@Override
 		protected Bundle doInBackground(String... userName) {
@@ -90,19 +128,41 @@ public class UserProfileFragment extends Fragment {
 					UserProfileFragment.this.birthdayText.setText(birthday);
 				}
 				
-				String desiredRange = bundle.getString(APIHandler.DESIRED_RANGE);
+				String age = bundle.getString("age");
 				
-				if(desiredRange != null){
+				if(age != null){
 					
-					UserProfileFragment.this.desireRangeText.setText(desiredRange);
+					UserProfileFragment.this.desireRangeText.setText(age);
 					
+				}
+				
+				String hobby = bundle.getString(APIHandler.HOBBY);
+				if(hobby != null){
+					UserProfileFragment.this.hobbyText.setText(hobby);
 				}
 				
 				String phoneNum = bundle.getString(APIHandler.PHONE);
 				if(phoneNum != null){
 					UserProfileFragment.this.phoneText.setText(phoneNum);
 				}
+				
+				String avatarUrl = bundle.getString("avatar");
+				if(avatarUrl != null){
+					avatarUrl = APIHandler.AUTH_SERVER_URL + avatarUrl;
+					new DownloadImageTask(userProfileAvatar).execute(avatarUrl);
+				}
+				
 			}
+		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		if(v == editProfileBtn){
+			Intent editProfileIntent = new Intent(this.getActivity(), EditProfileActivity.class);
+			editProfileIntent.putExtra(APIHandler.USER_ID, userId);
+			this.getActivity().startActivity(editProfileIntent);
 		}
 	}
 }

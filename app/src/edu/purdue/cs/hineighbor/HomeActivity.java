@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -142,10 +141,6 @@ public class HomeActivity extends Activity {
 				this.logoutAccount();
 	    		return true;
 	    		
-	    	case R.id.action_settings:
-	    		Intent settings = new Intent(this, SettingsActivity.class);
-	    		startActivity(settings);
-	            return true;
 	            
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -155,7 +150,7 @@ public class HomeActivity extends Activity {
 	
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 	    @Override
-	    public void onItemClick(AdapterView parent, View view, int position, long id) {
+	    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	        selectItem(position);
 	    }
 

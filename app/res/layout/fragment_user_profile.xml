@@ -98,6 +98,8 @@
             android:textSize="20sp" 
             android:layout_marginTop="10dp"
             android:layout_marginLeft="180dp"
+            android:background="@drawable/aritcle_btns"
+            android:textColor="@android:color/white"
             />
 
 </LinearLayout>

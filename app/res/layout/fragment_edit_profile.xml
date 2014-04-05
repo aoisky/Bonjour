@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+    
+   
+    
+    <TextView
+        android:id="@+id/edit_ageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Age">
+	</TextView>
+    
+    <EditText
+        android:id="@+id/edit_text_age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="number">
+
+    </EditText>
+    
+       <TextView
+        android:id="@+id/edit_hobby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Hobby">
+	</TextView>
+    
+    <EditText
+        android:id="@+id/edit_text_hobby"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
+
+    </EditText>
+
+          <TextView
+        android:id="@+id/edit_hobby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Birthday">
+	</TextView>
+        <EditText
+        android:id="@+id/edit_text_birthday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
+
+    </EditText>
+
+     <TextView
+        android:id="@+id/edit_security_question_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Security Question (No change if empty)">
+	</TextView>
+	
+     <Spinner
+       	android:id="@+id/edit_security_question_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         />
+     
+   <EditText
+        android:id="@+id/edit_text_security_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
+
+    </EditText>
+     
+    
+    <TextView
+        android:id="@+id/edit_genderTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Change gender is not allowed after register">
+	</TextView>
+
+    <Button
+        android:id="@+id/edit_profile_confirm_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/aritcle_btns"
+        android:textColor="@android:color/white"
+        android:text="Confirm Change" />
+
+</LinearLayout>
