@@ -40,6 +40,7 @@ import android.util.Log;
 public class APIHandler {
 	
 	public static final String LOG_TAG = "APIHandler";
+	public static final String AUTH_SERVER_URL = "http://mc18.cs.purdue.edu:8088/cs240/demo";
 	public static final String AUTH_SERVER = "http://mc18.cs.purdue.edu:8088/cs240/demo/action.php";
 	
 	//Some string constants for bundle keys

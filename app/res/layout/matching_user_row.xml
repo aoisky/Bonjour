@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+    
+<!-- Author Yudong Yang -->
+
+
+    <LinearLayout
+        android:id="@+id/matching_user_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip" >
+
+        <ImageView
+            android:id="@+id/avatar_image"
+            android:layout_width="40dip"
+            android:layout_height="40dip" 
+            android:contentDescription="avatarImage"/>
+    </LinearLayout>
+
+    <!-- User name -->
+
+    <TextView
+        android:id="@+id/matching_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/matching_user_linear"
+        android:layout_toRightOf="@+id/matching_user_linear"
+        android:text="user_name"
+        android:textColor="#040404"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/matching_user_gender"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/matching_user_linear"
+        android:layout_below="@id/matching_user_name"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/matching_user_linear"
+        android:text="gender"
+        android:textColor="#10bcc9"
+        android:textSize="12sp"
+        tools:ignore="SmallSp" />
+    
+        <TextView 
+        android:id="@+id/matching_user_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/matching_user_linear"
+        android:text="user_age"
+        android:textColor="#040404"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+    
+    <TextView 
+        android:id="@+id/matching_user_hobby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/matching_user_age"
+        android:text="user_hobby"
+        android:textColor="#040404"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:typeface="sans" />
+    
+        <TextView 
+        android:id="@+id/matching_user_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/matching_user_hobby"
+        android:text="user_phone"
+        android:textColor="#040404"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:typeface="sans" />
+
+</RelativeLayout>

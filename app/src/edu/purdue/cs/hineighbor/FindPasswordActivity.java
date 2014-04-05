@@ -95,6 +95,16 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 
 		actionBar.show();
 	}
+	
+	private class VerifyQuestionTask extends AsyncTask<String, Void, String>{
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
 
 	private class RetrieveQuestionTask extends AsyncTask<String, Void, String>{
 
