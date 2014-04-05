@@ -73,15 +73,5 @@
         android:textStyle="normal"
         android:typeface="sans" />
     
-        <TextView 
-        android:id="@+id/matching_user_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/matching_user_hobby"
-        android:text="user_phone"
-        android:textColor="#040404"
-        android:textSize="15sp"
-        android:textStyle="normal"
-        android:typeface="sans" />
 
 </RelativeLayout>

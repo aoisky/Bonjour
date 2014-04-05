@@ -269,7 +269,7 @@ public class LoginActivity extends Activity {
 
 			if (success != -1) {
 				Intent homeIntent = new Intent(getBaseContext(), HomeActivity.class);
-				
+
 				homeIntent.putExtra(USER_ID, success);
 				startActivity(homeIntent);
 				finish();

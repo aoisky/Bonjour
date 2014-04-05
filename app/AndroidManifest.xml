@@ -11,23 +11,20 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/bonjour_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name="edu.purdue.cs.hineighbor.MainActivity"
-            android:label="@string/app_name" >
-        </activity>
+
         <activity
             android:name="edu.purdue.cs.hineighbor.LoginActivity"
-            android:label="@string/title_activity_login"
+            android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -45,33 +42,15 @@
         </activity>
         <activity android:name="edu.purdue.cs.hineighbor.UserProfile" >
         </activity>
-        <activity
-            android:name="edu.purdue.cs.hineighbor.HomeListLayoutActivity"
-            android:label="@string/title_activity_home_list_layout" >
-        </activity>
-        <activity
-            android:name="edu.purdue.cs.hineighbor.HelpActivity"
-            android:label="@string/title_activity_help" >
-        </activity>
-        <activity
-            android:name="edu.purdue.cs.hineighbor.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="edu.purdue.cs.hineighbor.HomeActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.purdue.cs.hineighbor.HomeActivity" />
-        </activity>
+
         <activity
             android:name="edu.purdue.cs.hineighbor.FindPasswordActivity"
             android:label="@string/title_activity_find_password" >
         </activity>
+
         <activity
-            android:name="edu.purdue.cs.hineighbor.FindPassFragment1Activity"
-            android:label="@string/title_activity_find_pass_fragment1" >
-        </activity>
-        <activity
-            android:name="edu.purdue.cs.hineighbor.FindPassFragment2Activity"
-            android:label="@string/title_activity_find_pass_fragment2" >
+            android:name="edu.purdue.cs.hineighbor.EditProfileActivity"
+            android:label="@string/title_activity_edit_profile" >
         </activity>
     </application>
 

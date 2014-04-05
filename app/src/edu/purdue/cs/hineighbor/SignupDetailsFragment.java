@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -223,11 +222,10 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 
 
 			if (success != -1) {
-				Intent homeIntent = new Intent(SignupDetailsFragment.this.getActivity(), HomeActivity.class);
 				
-				homeIntent.putExtra(LoginActivity.USER_ID, success);
-				startActivity(homeIntent);
+				Toast.makeText(getActivity(), "Register successful, Please login", Toast.LENGTH_SHORT).show();
 				SignupDetailsFragment.this.getActivity().finish();
+				
 			} else{
 				Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
 				SignupDetailsFragment.this.getActivity().finish();

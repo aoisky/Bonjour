@@ -8,43 +8,36 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".FindPassFragment2Activity" >
 
-    <TextView
-        android:id="@+id/find_pass_security_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/find_pass_question"
-        android:layout_below="@+id/find_pass_question"
-        android:layout_marginTop="22dp"
-        android:text="(security question)" />
 
     <TextView
-        android:id="@+id/find_pass_question"
+        android:id="@+id/find_pass_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Please Answer the Security Question:"
+        android:text="Please Enter the New Password:"
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/find_pass_enter_answer"
+        android:id="@+id/find_pass_enter_new_password_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/find_pass_security_display"
-        android:layout_below="@+id/find_pass_security_display"
+        android:layout_alignLeft="@+id/find_pass_text_view"
+        android:layout_below="@+id/find_pass_text_view"
         android:layout_marginTop="18dp"
+        android:maxLength="32"
         android:ems="10"
-        android:inputType="textEmailAddress|textShortMessage" />
+        android:inputType="textPassword"/>
 
     <Button
-        android:id="@+id/find_pass_confirm_question"
+        android:id="@+id/find_pass_confirm_new_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/find_pass_enter_answer"
+        android:layout_below="@+id/find_pass_enter_new_password_text"
         android:background="@drawable/aritcle_btns"
-        android:textColor="@android:color/white"
         android:text="Confirm"
+        android:textColor="@android:color/white"
         android:textSize="14sp" />
 
 </RelativeLayout>

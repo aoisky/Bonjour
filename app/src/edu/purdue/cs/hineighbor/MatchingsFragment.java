@@ -41,7 +41,6 @@ public class MatchingsFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_matchings, container, false);
 		
 		matchList = (ListView) rootView.findViewById(android.R.id.list);
-		
 		return rootView;
 	}
 	
@@ -62,10 +61,11 @@ public class MatchingsFragment extends Fragment {
 		LocationListener locationListener = new LocationListener() {
 		    public void onLocationChanged(Location location) {
 		    	Toast.makeText(MatchingsFragment.this.getActivity(), "GPS Information Received", Toast.LENGTH_SHORT).show();
-		      // Called when a new location is found by the network location provider.
-		    	new MatchingTask().execute(location);
 		    	LocationManager locationManager = (LocationManager) MatchingsFragment.this.getActivity().getSystemService(Context.LOCATION_SERVICE);
 		    	locationManager.removeUpdates(this);
+		      // Called when a new location is found by the network location provider.
+		    	new MatchingTask().execute(location);
+
 		    }
 
 		    public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -120,18 +120,16 @@ public class MatchingsFragment extends Fragment {
 	        TextView genderText;
 	        TextView ageText;
 	        TextView hobbyText;
-	        TextView phoneText;
 	    }
 	    
 		ViewHolder holder = null;
 		Context context;
+		
 		public MatchingUserAdapter(Context context, int resource,
 				 List<Bundle> objects) {
 			super(context, resource, objects);
 			this.context = context;
 		}
-		
-		ImageView userAvatar = null;
 		
 	    public View getView(int position, View view, ViewGroup parent) {
 			
@@ -147,8 +145,9 @@ public class MatchingsFragment extends Fragment {
 		            holder.userNameText = (TextView) view.findViewById(R.id.matching_user_name);
 		            holder.genderText = (TextView) view.findViewById(R.id.matching_user_gender);
 		            holder.ageText = (TextView) view.findViewById(R.id.matching_user_age);
-		            holder.phoneText = (TextView) view.findViewById(R.id.matching_user_phone);
+		            holder.hobbyText = (TextView) view.findViewById(R.id.matching_user_hobby);
 		            view.setTag(holder);
+		            
 		        } else{
 		            holder = (ViewHolder)view.getTag();
 		        }
@@ -157,14 +156,21 @@ public class MatchingsFragment extends Fragment {
 			holder.genderText.setText(userInfo.getString("gender"));
 			holder.ageText.setText(userInfo.getString("age"));
 			holder.hobbyText.setText(userInfo.getString("hobby"));
-			holder.phoneText.setText(userInfo.getString("phone"));
-			this.userAvatar = holder.userAvatar;
-			new DownloadImageTask().execute(APIHandler.AUTH_SERVER_URL + userInfo.getString("avatar"));
+			
+			if(userInfo.getString("avatar") != null){
+				new DownloadImageTask(holder.userAvatar).execute(APIHandler.AUTH_SERVER_URL + userInfo.getString("avatar"));
+			}
+			
 	    	return view;
 	    }
 	    
 	    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
+	    	ImageView userAvatar;
+	    	
+	    	public DownloadImageTask(ImageView userAvatar){
+	    		this.userAvatar = userAvatar;
+	    	}
+	    	
 	        protected Bitmap doInBackground(String... urls) {
 	            String urldisplay = urls[0];
 	            Bitmap mIcon11 = null;
@@ -190,11 +196,12 @@ public class MatchingsFragment extends Fragment {
 		@Override
 		protected ArrayList<Bundle> doInBackground(Location... params) {
 			// TODO Auto-generated method stub
+			ArrayList<Bundle> matchingBundle = new ArrayList<Bundle>();
 			double altitude = params[0].getAltitude();
 			double latitude = params[0].getLatitude();
 			String mProvider = params[0].getProvider();
 			double longitude = params[0].getLongitude();
-			ArrayList<Bundle> matchingBundle = APIHandler.updateLocationMatching(getActivity(), userId, desiredRange, mProvider, String.valueOf(latitude), String.valueOf(longitude),String.valueOf(altitude));
+			matchingBundle = APIHandler.updateLocationMatching(getActivity(), userId, desiredRange, mProvider, String.valueOf(latitude), String.valueOf(longitude),String.valueOf(altitude), matchingBundle );
 			
 			return matchingBundle;
 		}
@@ -206,7 +213,6 @@ public class MatchingsFragment extends Fragment {
 			}else{
 				matchingUserAdapter = new MatchingUserAdapter(getActivity(), android.R.id.list, bundleList );
 				matchList.setAdapter(matchingUserAdapter);
-				matchingUserAdapter.notifyDataSetChanged();
 			}
 		}
 		

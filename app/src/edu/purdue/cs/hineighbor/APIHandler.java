@@ -409,7 +409,7 @@ public class APIHandler {
     	SQLHandler sqlHandler = SQLHandler.getInstance(context);
     	String accessToken = sqlHandler.getUserAccessToken((int)userId);
     	
-    	String responseStr = apiConnection(String.format(format, questionNo, userName, accessToken, answer));
+    	String responseStr = apiConnection(String.format(format, questionNo, userName, accessToken, getMD5(answer)));
     	
     	if(responseStr != null){
 			if(getResponseCode(responseStr) == 200){
@@ -523,7 +523,7 @@ public class APIHandler {
      * @param mAltitude
      * @return
      */
-    public static ArrayList<Bundle> updateLocationMatching(Context context, long userId, String desiredDistance,String mProvider, String mLatitude, String mLongitude, String mAltitude){
+    public static ArrayList<Bundle> updateLocationMatching(Context context, long userId, String desiredDistance,String mProvider, String mLatitude, String mLongitude, String mAltitude, ArrayList<Bundle> bundleList){
     	Log.d(LOG_TAG, "Start updating location and matching users");
     	String format = "action=match&username=%s&access_token=%s&data=%s";
     	
@@ -571,7 +571,7 @@ public class APIHandler {
     	    	
     	    	if(responseStr != null){
     				if(getResponseCode(responseStr) == 200){
-    					return getBundleListFromJSON(responseStr, MATCHINGS);
+    					return getBundleListFromJSON(responseStr, MATCHINGS, bundleList);
     					
     				} else
     					return null;
@@ -613,12 +613,11 @@ public class APIHandler {
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
 			byte[] encodedByteStr = md5.digest(byteStr);
 			
-			StringBuilder sb = new StringBuilder(2 * encodedByteStr.length);
-			
-			//Change byte array to string
-			for(byte b : encodedByteStr){
-				sb.append(String.format("%02x", b&0xff));
-				}
+						
+		       StringBuffer sb = new StringBuffer();
+		        for (int i = 0; i < encodedByteStr.length; ++i) {
+		          sb.append(Integer.toHexString((encodedByteStr[i] & 0xFF) | 0x100).substring(1,3));
+		       }
 			
 			return sb.toString();
 
@@ -641,9 +640,9 @@ public class APIHandler {
      * @param jsonIndex
      * @return bundleList
      */
-    private static ArrayList<Bundle> getBundleListFromJSON(String responseStr, String jsonIndex){
+    private static ArrayList<Bundle> getBundleListFromJSON(String responseStr, String jsonIndex, ArrayList<Bundle> bundleList){
     	JSONTokener tokener = new JSONTokener(responseStr);
-    	ArrayList<Bundle> bundleList = new ArrayList<Bundle>();
+    	
     	
     	JSONObject object;
 		try {
@@ -657,17 +656,16 @@ public class APIHandler {
     			int objectLength = jsonObject.length();
 				JSONArray keyArray = jsonObject.names();
 				Log.d(LOG_TAG,"getBundleListFromJSON: New bundle created");
+				Bundle bundle = new Bundle();
     			for(int j = 0; j < objectLength; j++){
-
-    				Bundle bundle = new Bundle();
 
     	    		String jsonName = keyArray.getString(j);
     	    		String value = jsonObject.getString(jsonName);
     	    		Log.d(LOG_TAG, "Put value into bundle{ " + jsonName + "}: " + value);
     	    		bundle.putString(jsonName, value);
-    	    		bundleList.add(bundle);
     				
     			}
+    			bundleList.add(bundle);
 
     		}
     		
