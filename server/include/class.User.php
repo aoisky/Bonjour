@@ -17,7 +17,6 @@ class User{
 	
 	public static $DEFAULT_USER_PROFILE = array(
 		"gender" => "male",
-		"birthday" => "2014-02-12",
 		"age" => 13,
 		"hobby" => "cs",
 		"desiredRange" => 10,
@@ -132,11 +131,11 @@ class User{
 			$user_password = $password;
 			$user_password_hash = password_hash($user_password, PASSWORD_DEFAULT);
 
-			$sql = "SELECT * FROM users WHERE user_name = '" . $username . "' OR user_email = '" . $useremail . "';";
+			$sql = "SELECT * FROM users WHERE user_email = '" . $useremail . "';";
 			$query_check_user_name = $this->db->selectQuery($sql);
 			
 			if (sizeof($query_check_user_name) > 0) {
-				throw new RegisterException("Sorry, that username or email address is already taken.");
+				throw new RegisterException("Sorry, that email address is already taken.");
 			} else {
 				// write new user's data into database
 				if (count($user_profile) == 0) $user_profile = self::$DEFAULT_USER_PROFILE;
@@ -311,6 +310,7 @@ class User{
 				"* cos(radians(user_geoLongitude) - radians(" . $longitude . ")) ".
 				"+ sin(radians(" . $latitude . ")) ".
 				"* sin(radians(user_geoLatitude)))) AS distance FROM users " .
+				" WHERE user_name !=\"" . $this->logged_in_user . "\" AND user_email !=\"" . $this->logged_in_user . "\"" .
 				";"; // should add a limit
 		$query = $this->db->selectQuery($sql);
 		
@@ -328,7 +328,7 @@ class User{
 			$result[] = $item;
 		}
 		
-		file_put_contents("matching.txt", var_export($result, true));
+		// file_put_contents("matching.txt", var_export($result, true));
 		
 		return $result;
 	}

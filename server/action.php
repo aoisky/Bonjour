@@ -19,7 +19,7 @@ $action = $app->getPOST("action");
 $access_token = $app->getPOST("access_token");
 $user = new User($app, $database, $access_token);
 
-file_put_contents("log.txt", var_export($_POST, true));
+// file_put_contents("log.txt", var_export($_POST, true));
 
 // the following actions allow guests to perform
 if ($action == "register"){
@@ -37,8 +37,8 @@ if ($action == "register"){
 					$avatar_url = $user->saveUserAvatar(base64_decode($v));
 					$myProfile["avatar"] = $avatar_url;
 				} else {
-					if ($key == "birthday" and !$app->isValidDate($v))
-						throw new UserProfileException("The birthday format is not valid.");
+					if ($key == "age" and !is_numeric($v))
+						throw new UserProfileException("Age should be a number.");
 					$myProfile[$key] = $app->filterHtml($v);
 				}
 			}
@@ -156,8 +156,8 @@ if ($action == "updateProfile") {
 					$avatar_url = $user->saveUserAvatar(base64_decode($v));
 					$myProfile["avatar"] = $avatar_url;
 				} else {
-					if ($key == "birthday" and !$app->isValidDate($v))
-						throw new UserProfileException("The birthday format is not valid.");
+					if ($key == "age" and !is_numeric($v))
+						throw new UserProfileException("Age should be a number.");
 					$myProfile[$key] = $app->filterHtml($v);
 				}
 			}
