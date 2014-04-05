@@ -85,7 +85,8 @@ public class MatchingsFragment extends Fragment {
 		// Set up the input
 		final EditText input = new EditText(this.getActivity());
 		
-		input.setInputType(InputType.TYPE_CLASS_NUMBER);
+		//Black Box Bug #5: Should be found in Black box testing 
+		//input.setInputType(InputType.TYPE_CLASS_NUMBER);
 		builder.setView(input);
 
 		// Set up the buttons

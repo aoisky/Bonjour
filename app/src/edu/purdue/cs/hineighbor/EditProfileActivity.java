@@ -205,22 +205,27 @@ public class EditProfileActivity extends Activity implements OnItemSelectedListe
 				if(age != null){
 					EditProfileActivity.this.ageEdit.setText(age);
 				}
-					
+				
+				//Black box bug #12
+				/*
 				String hobby = bundle.getString(APIHandler.HOBBY);
 				if(hobby != null){
 					EditProfileActivity.this.hobbyText.setText(hobby);
 				}
+				*/
 				
 				String birthday = bundle.getString(APIHandler.BIRTHDAY);
 				if(birthday != null){
 					EditProfileActivity.this.birthdayText.setText(birthday);
 				}
 				
-				new RetrieveQuestionSetTask().execute();
 				
 			}else{
 				Toast.makeText(EditProfileActivity.this,"Retrieve current profile failed", Toast.LENGTH_SHORT).show();
 			}
+			
+			//Black box bug #6 !!!!!
+			new RetrieveQuestionSetTask().execute();
 		}
 		
 	}

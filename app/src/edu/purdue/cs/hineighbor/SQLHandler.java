@@ -103,11 +103,11 @@ public class SQLHandler extends SQLiteOpenHelper{
 		// TODO Auto-generated method stub
 		db.execSQL(USER_TABLE_CREATE);
 		db.execSQL(FRIEND_TABLE_CREATE);
-		Log.d(LOG_TAG, "Created user and article tables in the database");
+		//Log.d(LOG_TAG, "Created user and article tables in the database");
 	}
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldversion, int newversion) {
-		Log.d(LOG_TAG, "Upgrade from version " + oldversion + " to " + newversion + ", Previous database will be deleted.");
+		//Log.d(LOG_TAG, "Upgrade from version " + oldversion + " to " + newversion + ", Previous database will be deleted.");
         db.execSQL(USER_SQL_DELETE_ENTRIES);
         db.execSQL(ARTICLE_SQL_DELETE_ENTRIES);
         
@@ -129,7 +129,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 		values.put(USER_GENDER, userInfo.getIntGender());
 		
 		long rowid = db.insert(USER_TABLE_NAME, null, values);
-		Log.d(LOG_TAG, "A user has been added to the database: " + userInfo.getUserName());
+		//Log.d(LOG_TAG, "A user has been added to the database: " + userInfo.getUserName());
 
 		return rowid;
 	}
@@ -149,7 +149,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         if(cursor.isNull(0)){
         	return null;
         }
-        Log.d(LOG_TAG, "Got user access token form database: " + cursor.getString(0));
+        //Log.d(LOG_TAG, "Got user access token form database: " + cursor.getString(0));
         return cursor.getString(0);
 
 	}
@@ -205,7 +205,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 	
 	
 	public boolean setUserAccessToken(String userName, String userAccessToken){
-		Log.d(LOG_TAG, "Updating user access token in the database");
+		//Log.d(LOG_TAG, "Updating user access token in the database");
 		String getUserQuery = "SELECT " + USER_ID + " FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + " = \"" + userName +"\"";
 	    SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(getUserQuery, null);
@@ -267,7 +267,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
-        Log.d(LOG_TAG, "Userid: " + userId + "Get friends count: " + count);
+        //Log.d(LOG_TAG, "Userid: " + userId + "Get friends count: " + count);
 
         return count;
     }
@@ -277,7 +277,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
-        Log.d(LOG_TAG, "Get users count: " + count);
+       //Log.d(LOG_TAG, "Get users count: " + count);
 
         return count;
     }
@@ -287,7 +287,7 @@ public class SQLHandler extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
-        Log.d(LOG_TAG, "Get all friends count: " + count);
+        //Log.d(LOG_TAG, "Get all friends count: " + count);
 
         return count;
     }
@@ -331,7 +331,7 @@ public class SQLHandler extends SQLiteOpenHelper{
 		values.put(FRIEND_LOCATION, bundle.getString(FRIEND_LOCATION));
 		values.put(FRIEND_TYPE, bundle.getInt(FRIEND_TYPE));
 		long rowid = db.insert(FRIENDS_TABLE_NAME, null, values);
-		Log.d(LOG_TAG, "userId: " + bundle.getLong(FRIENDSLIST_USER_ID) +" ,A friend added to the database: " + bundle.getString(FRIEND_NAME));
+		//Log.d(LOG_TAG, "userId: " + bundle.getLong(FRIENDSLIST_USER_ID) +" ,A friend added to the database: " + bundle.getString(FRIEND_NAME));
 
 		return rowid;
 	}

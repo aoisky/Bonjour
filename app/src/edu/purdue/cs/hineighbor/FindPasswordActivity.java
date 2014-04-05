@@ -78,11 +78,15 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		if(v == userNameConfirmBtn){
 			String emailAddress = emailAddressText.getText().toString();
-			if(emailAddress != null && emailAddress.contains("@")){
-				retrieveSecurityQuestion(emailAddress);
-			}else{
-				emailAddressText.setError("Invalid email address");
-			}
+			retrieveSecurityQuestion(emailAddress);
+				//Black box bug #2
+			/*
+				if(emailAddress != null && emailAddress.contains("@")){
+					
+				}else{
+					emailAddressText.setError("Invalid email address");
+				}
+			*/
 		}
 		
 		if(v == securityConfirmBtn){
@@ -194,8 +198,8 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 			if(APIHandler.isNetworkAvaliable(FindPasswordActivity.this)){
 				securityQuestion = APIHandler.getUserSecurityQuestion(userName);
 			} else{
-				Toast.makeText(FindPasswordActivity.this, "Network is not available", Toast.LENGTH_SHORT).show();
-				this.cancel(true);
+				//Toast.makeText(FindPasswordActivity.this, "Network is not available", Toast.LENGTH_SHORT).show();
+				return null;
 			}
 			FindPasswordActivity.this.userName = userName;
 			return securityQuestion;
@@ -208,7 +212,7 @@ public class FindPasswordActivity extends Activity implements OnClickListener {
 				retrieveLayout.addView(answerQuestionView);
 				FindPasswordActivity.this.securityQuestionText.setText(question);
 			}else{
-				Toast.makeText(FindPasswordActivity.this, "Security question is not set", Toast.LENGTH_SHORT).show();
+				Toast.makeText(FindPasswordActivity.this, "Security question retrieve failed", Toast.LENGTH_SHORT).show();
 			}
 		}
 		

@@ -98,6 +98,8 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 				return;
 			}
 			
+			//Black box bug #18
+			/*
 			if(password != null && password.length() < 6){
 				viewPager.setCurrentItem(0);
 				EditText passwordEdit = (EditText)basicFragment.getView().findViewById(R.id.signup_password);
@@ -105,7 +107,11 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 				passwordEdit.requestFocus();
 				return;
 			}
+			*/
 			
+			
+			//Black box bug #15
+			/*
 			if(password != null && confirmPassword != null && !password.equals(confirmPassword)){
 				viewPager.setCurrentItem(0);
 				EditText passwordEdit = (EditText)basicFragment.getView().findViewById(R.id.signup_confirmPassword);
@@ -113,6 +119,7 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 				passwordEdit.requestFocus();
 				return;
 			}
+			*/
 		
 		
 		if(!uploadFragment.isIconSet()){
@@ -126,11 +133,15 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 		userIconBitmap = ((BitmapDrawable)userIcon.getDrawable()).getBitmap();
 
 		
+		//Black box bug #14
+		/*
 		if(ageEdit.getText().toString().equals("")){
 			ageEdit.setError("Invalid Age");
+			//Also check the age range here
 			ageEdit.requestFocus();
 			return;
 		}
+		*/
 		
 		if(hobbyText.getText().toString().equals("")){
 			hobbyText.setError("Invalid Hobby");
@@ -138,17 +149,23 @@ public class SignupDetailsFragment extends Fragment implements OnClickListener, 
 			return;
 		}
 		
+		//Black box bug #25
+		/*
 		if(securityAnswerText.getText().toString().equals("")){
 			securityAnswerText.setError("Invalid Security Answer");
 			securityAnswerText.requestFocus();
 			return;
 		}
+		*/
 		
+		//Black box bug #17
+		/*
 		if(genderRadio.getCheckedRadioButtonId() == -1){
 			Toast.makeText(getActivity(), "You need to choose a gender", Toast.LENGTH_SHORT).show();
 			genderRadio.requestFocus();
 			return;
 		}
+		*/
 		
 		int genderId = genderRadio.getCheckedRadioButtonId();
 		gender = false; // False: male True: female

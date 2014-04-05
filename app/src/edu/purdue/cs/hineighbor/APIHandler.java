@@ -88,12 +88,12 @@ public class APIHandler {
 		
 		String loginStr = String.format("action=login&username=%s&password=%s", userName, password);
 		String responseStr = apiConnection(loginStr);
-		Log.d(LOG_TAG, "loginResponseStr: " + responseStr);
+		//Log.d(LOG_TAG, "loginResponseStr: " + responseStr);
 		
 		if(APIHandler.getResponseCode(responseStr) == 200){
 			
 			String accessToken = APIHandler.getStringFromJSON(responseStr, "access_token");
-			Log.d(LOG_TAG, "login access token: " + accessToken);
+			//Log.d(LOG_TAG, "login access token: " + accessToken);
 			SQLHandler sqlHandler = SQLHandler.getInstance(context);
 			
 			//Decode the userName and password to insert the database
@@ -106,18 +106,18 @@ public class APIHandler {
 			}
 			
 			if(sqlHandler.setUserAccessToken(userName, accessToken) == false){
-				Log.d(LOG_TAG, "Login: No exists user entry in the database");
+				//Log.d(LOG_TAG, "Login: No exists user entry in the database");
 				
 				//Create Default user profile
 				UserInfo userInfo = new UserInfo(context, userName, accessToken, password);
 				return sqlHandler.addUser(userInfo);
 			}else{
-				Log.d(LOG_TAG, "Login: set access token succefully");
+				//Log.d(LOG_TAG, "Login: set access token succefully");
 				return sqlHandler.getUserIdByUserName(userName);
 			}
 			
 		}
-		Log.d(LOG_TAG, "Login Error");
+		//Log.d(LOG_TAG, "Login Error");
 		return -1L;
 	}
 	/**
@@ -132,7 +132,7 @@ public class APIHandler {
 	 * @return userId in the database
 	 */
 	public static long register(Context context, String userName, String password, String retype, boolean gender, int age, Bitmap userIcon ){
-		Log.d(LOG_TAG, "Start register");
+		//Log.d(LOG_TAG, "Start register");
 		
 		String email = userName;
 		
@@ -274,9 +274,9 @@ public class APIHandler {
      * @return userProfile bundle
      */
     public static Bundle getUserProfile(String userName){
-    	Log.d(LOG_TAG, "Start getting user profile");
+    	//Log.d(LOG_TAG, "Start getting user profile");
     	if(userName == null){
-    		Log.d(LOG_TAG, "getUserProfile: username is null");
+    		//Log.d(LOG_TAG, "getUserProfile: username is null");
     		return null;
     	}
     	
@@ -291,7 +291,7 @@ public class APIHandler {
 				
 				for(String key : hashMap.keySet()){
 					String value = hashMap.get(key);
-					Log.d(LOG_TAG, "Profile{ " + key +" }:" + value);
+					//Log.d(LOG_TAG, "Profile{ " + key +" }:" + value);
 					bundle.putString(key, value);
 				}
 				return bundle;
@@ -311,7 +311,7 @@ public class APIHandler {
      * @return update result
      */
     public static boolean updateUserProfile(Context context, Bundle bundle){
-    	Log.d(LOG_TAG, "Start updating user profile");
+    	//Log.d(LOG_TAG, "Start updating user profile");
     	long userId = 0L;
     	String userName;
     	String accessToken;
@@ -337,27 +337,27 @@ public class APIHandler {
     				
     				strBuf.append(String.format(requestFormat, bundleKey, bundle.getString(bundleKey)));
     			}
-    			Log.d(LOG_TAG, strBuf.toString());
+    			//Log.d(LOG_TAG, strBuf.toString());
     			
     			String responseStr = apiConnection(strBuf.toString());
     			
     			if(responseStr != null){
     				if(getResponseCode(responseStr) == 200){
-    					Log.d(LOG_TAG, "Profile updated successful");
+    					//Log.d(LOG_TAG, "Profile updated successful");
     					return true;
     				}else{
-    					Log.d(LOG_TAG, "Profile updated failed");
+    					//Log.d(LOG_TAG, "Profile updated failed");
     					return false;
     				}
     			}else{
-    				Log.d(LOG_TAG, "Profile updated failed");
+    				//Log.d(LOG_TAG, "Profile updated failed");
     				return false;
     			}
     			
     		}
     			
     	}
-    	Log.d(LOG_TAG, "Profile updated failed");
+    	//Log.d(LOG_TAG, "Profile updated failed");
     	return false;
     }
     
@@ -375,7 +375,7 @@ public class APIHandler {
 				HashMap<String, String> hashMap = getHashMapFromJSON(responseStr, DATA);
 				
 				for(String key : hashMap.keySet()){
-					Log.d(LOG_TAG, "Security Question{ " + key +" }:" + hashMap.get(key));
+					//Log.d(LOG_TAG, "Security Question{ " + key +" }:" + hashMap.get(key));
 				}
 				
 				return hashMap;
@@ -513,7 +513,7 @@ public class APIHandler {
      * @return
      */
     public static ArrayList<Bundle> updateLocationMatching(Context context, long userId, String desiredDistance,String mProvider, String mLatitude, String mLongitude, String mAltitude, ArrayList<Bundle> bundleList){
-    	Log.d(LOG_TAG, "Start updating location and matching users");
+    	//Log.d(LOG_TAG, "Start updating location and matching users");
     	String format = "action=match&username=%s&access_token=%s&data=%s";
     	
     	//Get user login information
@@ -644,13 +644,13 @@ public class APIHandler {
     			
     			int objectLength = jsonObject.length();
 				JSONArray keyArray = jsonObject.names();
-				Log.d(LOG_TAG,"getBundleListFromJSON: New bundle created");
+				//Log.d(LOG_TAG,"getBundleListFromJSON: New bundle created");
 				Bundle bundle = new Bundle();
     			for(int j = 0; j < objectLength; j++){
 
     	    		String jsonName = keyArray.getString(j);
     	    		String value = jsonObject.getString(jsonName);
-    	    		Log.d(LOG_TAG, "Put value into bundle{ " + jsonName + "}: " + value);
+    	    		//Log.d(LOG_TAG, "Put value into bundle{ " + jsonName + "}: " + value);
     	    		bundle.putString(jsonName, value);
     				
     			}
@@ -702,7 +702,7 @@ public class APIHandler {
 				e.printStackTrace();
 			}catch (Exception e){
 				e.printStackTrace();
-				Log.d(LOG_TAG, "JSON parse hashMap unknown error");
+				//Log.d(LOG_TAG, "JSON parse hashMap unknown error");
 			}
 			
 			return null;
@@ -722,15 +722,15 @@ public class APIHandler {
     	try {
 			JSONObject object = (JSONObject) tokener.nextValue();
 			String str = object.getString(jsonIndex);
-			Log.d(LOG_TAG, "Obtained JSON string: " + str);
+			//Log.d(LOG_TAG, "Obtained JSON string: " + str);
 			return str;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			Log.d(LOG_TAG, "JSON parse expcetion");
+			//Log.d(LOG_TAG, "JSON parse expcetion");
 			e.printStackTrace();
 		}catch (Exception e){
 			e.printStackTrace();
-			Log.d(LOG_TAG, "JSON parse string unknown error");
+			//Log.d(LOG_TAG, "JSON parse string unknown error");
 		}
     	
     	return null;
@@ -745,7 +745,7 @@ public class APIHandler {
     private static int getResponseCode(String responseStr){
         String responseCodeStr = getStringFromJSON(responseStr, "code");
         if(responseCodeStr == null) {
-   	        Log.d(LOG_TAG, "Failed to get response code, responseCodeStr is null");
+   	        //Log.d(LOG_TAG, "Failed to get response code, responseCodeStr is null");
         	return -1;
         }
         
@@ -780,7 +780,7 @@ public class APIHandler {
 	 * @return JSON String
 	 */
 	private static String apiConnection(String requestStr){
-		Log.d(LOG_TAG, "Start API connection");
+		//Log.d(LOG_TAG, "Start API connection");
 		URL url;
 		try {
 			
@@ -798,7 +798,7 @@ public class APIHandler {
 	        OutputStream sendData = urlConnect.getOutputStream();
 	        BufferedWriter dataWriter = new BufferedWriter(new OutputStreamWriter(sendData));
 	        if(requestStr != null)
-	        	Log.d(LOG_TAG,"Request String: " + requestStr); //Log Info for debug
+	        	//Log.d(LOG_TAG,"Request String: " + requestStr); //Log Info for debug
 	        	dataWriter.write(requestStr);
 	        dataWriter.close();
 	        
@@ -812,19 +812,19 @@ public class APIHandler {
 	        String otherInfo;
 	        
 	        while((otherInfo = reader.readLine()) != null){
-	        	Log.d(LOG_TAG, "Other received info: " + otherInfo);
+	        	//Log.d(LOG_TAG, "Other received info: " + otherInfo);
 	        }
 	        
 	        reader.close();
 	        urlConnect.disconnect();
 	        
-	        Log.d(LOG_TAG,"Returned JSON Info:" + receivedStr); //Log Info for debug
+	        //Log.d(LOG_TAG,"Returned JSON Info:" + receivedStr); //Log Info for debug
 	        
 	        return receivedStr;
 	        
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.d(LOG_TAG, "API Connection Exception");
+			//Log.d(LOG_TAG, "API Connection Exception");
 			e.printStackTrace();
 		}catch (Exception e){
 			e.printStackTrace();
