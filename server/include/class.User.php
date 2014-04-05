@@ -17,6 +17,7 @@ class User{
 	
 	public static $DEFAULT_USER_PROFILE = array(
 		"gender" => "male",
+		"birthday" => "",
 		"age" => 13,
 		"hobby" => "cs",
 		"desiredRange" => 10,

@@ -149,7 +149,12 @@ class Core {
 	
 	public function sendEmail($address, $subject = "", $content = ""){
 		// removed code
-		
+		// require_once "Mail.php";
+		// $mail = new Mail();
+		// $mail->addTo($address, '');
+		// $mail->setSubject($subject);
+		// $mail->setMessage($content);
+		// $mail->send();
 	}
 	
 	public function getRandomStr($len) {

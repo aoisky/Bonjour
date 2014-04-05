@@ -36,11 +36,11 @@ if ($action == "register"){
 					$v = $_POST["avatar"];
 					$avatar_url = $user->saveUserAvatar(base64_decode($v));
 					$myProfile["avatar"] = $avatar_url;
-				} else {
-					if ($key == "age" and !is_numeric($v))
+				} else if ($key == "birthday" and !$app->isValidDate($v)) {
+ 						throw new UserProfileException("The birthday format is not valid.");
+				} else if ($key == "age" and !is_numeric($v)) {
 						throw new UserProfileException("Age should be a number.");
-					$myProfile[$key] = $app->filterHtml($v);
-				}
+				} else $myProfile[$key] = $app->filterHtml($v);
 			}
 		}
 		
@@ -153,18 +153,19 @@ if ($action == "updateProfile") {
 				$v = $app->getPOST($key);
 				if ($key == "avatar") {
 					$v = $_POST["avatar"];
-					$avatar_url = $user->saveUserAvatar(base64_decode($v));
-					$myProfile["avatar"] = $avatar_url;
-				} else {
-					if ($key == "age" and !is_numeric($v))
+					if ($v != $val) {
+						$avatar_url = $user->saveUserAvatar(base64_decode($v));
+						$myProfile["avatar"] = $avatar_url;
+					}
+				} else if ($key == "birthday" and !$app->isValidDate($v)) {
+ 						throw new UserProfileException("The birthday format is not valid.");
+				} else if ($key == "age" and !is_numeric($v)) {
 						throw new UserProfileException("Age should be a number.");
-					$myProfile[$key] = $app->filterHtml($v);
-				}
+				} else $myProfile[$key] = $app->filterHtml($v);
 			}
 		}
-		$user->setProfile($user->logged_in_user, $myProfile);
 		
-		$myProfile["avatar"] = $avatar_url;
+		$user->setProfile($user->logged_in_user, $myProfile);
 		$app->exitWithArrayData($myProfile);
 	} catch (UserException $e) {
 		$app->dieUserException($e);
