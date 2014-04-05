@@ -17,6 +17,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Find password activity
+ * @author Yudong Yang
+ *
+ */
 public class FindPasswordActivity extends Activity implements OnClickListener {
 
 	private FrameLayout retrieveLayout;

@@ -44,12 +44,28 @@
 
     </EditText>
 
+          <TextView
+        android:id="@+id/edit_hobby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip" 
+        android:text="Birthday">
+	</TextView>
+        <EditText
+        android:id="@+id/edit_text_birthday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:inputType="text">
+
+    </EditText>
+
      <TextView
         android:id="@+id/edit_security_question_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dip" 
-        android:text="Security Question">
+        android:text="Security Question (No change if empty)">
 	</TextView>
 	
      <Spinner
@@ -73,32 +89,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dip" 
-        android:text="Gender">
+        android:text="Change gender is not allowed after register">
 	</TextView>
-    <RadioGroup
-    	android:id="@+id/edit_profile_signup_gender_radio_group"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
-	    <RadioButton
-	        android:id="@+id/edit_profile_radioButtonFemale"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Female" />
-	
-	    <RadioButton
-	        android:id="@+id/edit_profile_radioButtonMale"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="Male" />
-	</RadioGroup>
 
     <Button
         android:id="@+id/edit_profile_confirm_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/aritcle_btns"
         android:textColor="@android:color/white"
         android:text="Confirm Change" />

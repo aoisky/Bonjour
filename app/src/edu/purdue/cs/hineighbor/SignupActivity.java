@@ -16,7 +16,11 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+/**
+ * Signup activity
+ * @author Yudong Yang
+ *
+ */
 public class SignupActivity extends Activity {
 
 	

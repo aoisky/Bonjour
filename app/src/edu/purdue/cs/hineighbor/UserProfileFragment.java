@@ -16,6 +16,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * User Profile Fragment
+ * @author Yudong Yang
+ *
+ */
 public class UserProfileFragment extends Fragment implements OnClickListener {
 
 
@@ -123,11 +128,11 @@ public class UserProfileFragment extends Fragment implements OnClickListener {
 					UserProfileFragment.this.birthdayText.setText(birthday);
 				}
 				
-				String desiredRange = bundle.getString(APIHandler.DESIRED_RANGE);
+				String age = bundle.getString("age");
 				
-				if(desiredRange != null){
+				if(age != null){
 					
-					UserProfileFragment.this.desireRangeText.setText(desiredRange);
+					UserProfileFragment.this.desireRangeText.setText(age);
 					
 				}
 				

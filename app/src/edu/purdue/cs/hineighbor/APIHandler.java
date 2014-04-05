@@ -315,10 +315,6 @@ public class APIHandler {
     	long userId = 0L;
     	String userName;
     	String accessToken;
-    	String gender;
-    	String birthday;
-    	String desiredRange;
-    	String phone;
     	StringBuffer strBuf = new StringBuffer();
     	String format = "action=updateProfile&username=%s&access_token=%s";
     	String requestFormat = "&%s=%s";
@@ -334,21 +330,14 @@ public class APIHandler {
     			
     			strBuf.append(String.format(format, userName, accessToken));
     			
-    			if((gender = bundle.getString(GENDER)) != null){
-    				strBuf.append(String.format(requestFormat, GENDER, gender));
+    			for(String bundleKey : bundle.keySet()){
+    				if(bundleKey.equals(USER_ID) || bundleKey.equals(USERNAME) || bundleKey.equals(ACCESS_TOKEN)){
+    					continue;
+    				}
+    				
+    				strBuf.append(String.format(requestFormat, bundleKey, bundle.getString(bundleKey)));
     			}
-    			
-    			if((birthday = bundle.getString(BIRTHDAY)) != null){
-    				strBuf.append(String.format(requestFormat, BIRTHDAY, birthday));
-    			}
-    			
-    			if((desiredRange = bundle.getString(DESIRED_RANGE)) != null){
-    				strBuf.append(String.format(requestFormat, DESIRED_RANGE, desiredRange));
-    			}
-    			
-    			if((phone = bundle.getString(PHONE)) != null){
-    				strBuf.append(String.format(requestFormat, PHONE, phone));
-    			}
+    			Log.d(LOG_TAG, strBuf.toString());
     			
     			String responseStr = apiConnection(strBuf.toString());
     			
