@@ -23,7 +23,7 @@ if (DEBUG_MODE) {
 $APP_URL = "http://127.0.0.1/bonjour/";
 
 $db_params = array(
-	"host" => "localhost", 
+	"host" => "127.0.0.1", 
 	"username" => "bonjour_demo", 
 	"password" => "demo", 
 	"database" => "bonjour_demo",
