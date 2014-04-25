@@ -1,0 +1,41 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+	<!-- Items on the action bar to select -->
+    <item
+        android:id="@+id/search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/search_title"/>
+    <item
+        android:id="@+id/action_add_tab"
+        android:icon="@drawable/ic_action_new"
+        android:showAsAction="always"
+        android:title="@string/action_add_tab"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_share_article"
+        android:icon="@drawable/ic_action_share"
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_share_article"/>
+    
+    <!-- Items on the menu to select -->
+    <item
+        android:id="@+id/languages"
+        android:showAsAction="never"
+        android:title="@string/action_languages"/>
+    <item
+        android:id="@+id/saveArticle"
+        android:showAsAction="never"
+        android:title="@string/action_save_article"/>
+    <item
+        android:id="@+id/action_show_saved_articles"
+        android:showAsAction="never"
+        android:title="@string/action_show_saved_article"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>

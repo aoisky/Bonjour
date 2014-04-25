@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/drawer_list_item_bg"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/drawer_list_item_padding_top_bottom"
+    android:paddingLeft="@dimen/drawer_list_item_padding_left_right"
+    android:paddingRight="@dimen/drawer_list_item_padding_left_right"
+    android:paddingTop="@dimen/drawer_list_item_padding_top_bottom"
+    android:weightSum="100" >
+
+    <TextView
+        android:id="@+id/drawer_list_item_text"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="95"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/drawer_text" />
+
+    <CheckBox
+        android:id="@+id/drawer_fav_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:button="@drawable/ic_action_rating" />
+
+    <ImageButton
+        android:id="@+id/drawer_remove_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:contentDescription="@string/remove_button_description"
+        android:src="@drawable/ic_action_remove" />
+
+</LinearLayout>

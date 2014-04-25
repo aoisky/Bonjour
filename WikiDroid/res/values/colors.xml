@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="drawer_bg">#4e4e4e</color>
+    <color name="drawer_bg_pressed_focused">#5c5c5c</color>
+    <color name="drawer_text">#ffffff</color>
+
+</resources>

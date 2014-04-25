@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WikiDroid</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add_tab">Add tab</string>
+    <string name="action_languages">Language</string>
+    <string name="action_save_article">Save article</string>
+    <string name="default_tab_title">New tab</string>
+    <string name="dialog_ok">Cancel</string>
+    <string name="dialog_language_empty">No languages available</string>
+
+    <!-- those string are for the action bar search field -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Word to Search</string>
+
+    <!-- strings of error -->
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_invalid_input">Invalid input</string>
+    <string name="error_connection">Connection error</string>
+    <string name="error_internal">Internal error</string>
+    <string name="error_max_tab_reached">Max tab size reached</string>
+    <string name="error_article_not_found">Article not found</string>
+    <string name="error_remove_tab_failed">Failed to remove tab</string>
+
+    <!-- strings for sccessibility -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="blur_image_description">Image for displaying blurred background</string>
+    <string name="remove_button_description">Remove current tab</string>
+
+    <!-- string for save article -->
+    <string name="title_activity_list_save_links">ListSaveLinks</string>
+    <string name="action_show_saved_article">List of Articles Saved</string>
+
+    <!-- string for share article -->
+    <string name="action_share_article">Share Article</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="dialog_language_loading">Loading unavailable languages&#8230;</string>
+
+</resources>

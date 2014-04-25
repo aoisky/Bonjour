@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cs408team3.wikidroid"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <!-- uses permission to have acess to internet and wifi status -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_logo"
+        android:theme="@style/Theme.Wikidroid" >
+        <activity
+            android:name="cs408team3.wikidroid.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name="cs408team3.wikidroid.ListSaveLinks"
+            android:label="@string/title_activity_list_save_links" >
+            
+        </activity>
+        <activity
+            android:name="cs408team3.wikidroid.listArticles.ListSaveArticles"
+            android:label="Saved Article">
+     
+        </activity>
+        
+        <activity
+            android:name="cs408team3.wikidroid.listArticles.LoadSavedStuffs"
+            android:label="@string/title_activity_list_save_links"
+            android:parentActivityName="cs408team3.wikidroid.listArticles.ListSaveArticles" >
+            
+        <!-- Parent activity meta-data to support API level 7+ -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="cs408team3.wikidroid.listArticles.ListSaveArticles" />
+        
+        </activity>
+        
+    </application>
+
+</manifest>
